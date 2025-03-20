@@ -19,7 +19,7 @@ public class DatabaseConnection {
             String password = props.getProperty("db.password");
 
             // Load JDBC Driver
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
             return DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException e) {

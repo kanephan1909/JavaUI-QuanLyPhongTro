@@ -24,9 +24,9 @@ public class HoaDonController {
                 "       hd.tongTien, hd.trangThai, hd.thang, " +
                 "       kt.ho_ten AS hoTen, " +
                 "       p.ten_phong AS tenPhong " +
-                "FROM dbo.HoaDon hd " +
-                "JOIN dbo.KhachThue kt ON hd.maKhach = kt.id " +
-                "JOIN dbo.Phong p ON hd.maPhong = p.ma_phong";
+                "FROM HoaDon hd " +
+                "JOIN KhachThue kt ON hd.maKhach = kt.id " +
+                "JOIN Phong p ON hd.maPhong = p.ma_phong";
 
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -56,7 +56,7 @@ public class HoaDonController {
     // Thêm hóa đơn vào database
     public boolean themHoaDon(HoaDon hoaDon) {
         String sql = 
-            "INSERT INTO dbo.HoaDon (maPhong, ngayLap, tienDien, tienNuoc, tienPhong, " +
+            "INSERT INTO HoaDon (maPhong, ngayLap, tienDien, tienNuoc, tienPhong, " +
             "                       tongTien, trangThai, thang, maKhach) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -86,7 +86,7 @@ public class HoaDonController {
 
     // Tìm id của KhachThue dựa vào cột ho_ten
     private int timMaKhachTuTen(String hoTen) {
-        String sql = "SELECT id FROM dbo.KhachThue WHERE ho_ten = ?";
+        String sql = "SELECT id FROM KhachThue WHERE ho_ten = ?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, hoTen);
@@ -103,7 +103,7 @@ public class HoaDonController {
     // Xóa hóa đơn theo maHoaDon
     public void xoaHoaDon(int id) {
         try {
-            String sql = "DELETE FROM dbo.HoaDon WHERE maHoaDon = ?";
+            String sql = "DELETE FROM HoaDon WHERE maHoaDon = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
@@ -115,7 +115,7 @@ public class HoaDonController {
     // Cập nhật trạng thái hóa đơn (nếu cần)
     public void capNhatTrangThaiHoaDon(int id, String trangThai) {
         try {
-            String sql = "UPDATE dbo.HoaDon SET trangThai = ? WHERE maHoaDon = ?";
+            String sql = "UPDATE oaDon SET trangThai = ? WHERE maHoaDon = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, trangThai);
             pstmt.setInt(2, id);

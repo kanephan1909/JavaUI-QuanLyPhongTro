@@ -116,6 +116,7 @@ public class HoaDonPanel extends JPanel {
             double tienDien = Double.parseDouble(txtTienDien.getText().trim());
             double tienNuoc = Double.parseDouble(txtTienNuoc.getText().trim());
             double tienPhong = Double.parseDouble(txtTienPhong.getText().trim());
+            // Tính tiền phòng
             double tongTien = tienDien + tienNuoc + tienPhong;
             String thang = txtThang.getText().trim();
             String trangThai = cboTrangThai.getSelectedItem().toString();
