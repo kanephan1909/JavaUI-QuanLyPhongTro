@@ -5,20 +5,22 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
+import BUS.KhachThueBUS;
+import BUS.PhongBUS;
 import DTO.KhachThueDTO;
 import DTO.PhongDTO;
 
 public class KhachPanel extends JPanel {
     private JTable table;
     private DefaultTableModel model;
-    private KhachThueBUS khachController;
+    private KhachThueBUS khachbus;
     private PhongBUS phongBUS;
 
     private JTextField txtSearch;
     private JButton btnSearch, btnAdd, btnEdit, btnDelete;
 
     public KhachPanel() {
-        khachController = new KhachThueBUS();
+        khachbus = new KhachThueBUS();
         phongBUS = new PhongBUS();
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.WHITE);
@@ -65,7 +67,7 @@ public class KhachPanel extends JPanel {
 
     private void loadData() {
         model.setRowCount(0);
-        List<KhachThueDTO> list = khachController.getAllKhachThue();
+        List<KhachThueDTO> list = khachbus.getAllKhachThue();
         for (KhachThueDTO k : list) {
             model.addRow(new Object[] { k.getId(), k.getHoTen(), k.getSoDienThoai(), k.getCccd(), k.getPhongID() });
         }
@@ -78,7 +80,7 @@ public class KhachPanel extends JPanel {
             return;
         }
         model.setRowCount(0);
-        List<KhachThueDTO> list = khachController.getAllKhachThue();
+        List<KhachThueDTO> list = khachbus.getAllKhachThue();
         for (KhachThueDTO k : list) {
             if(k.getHoTen().toLowerCase().contains(keyword) ||
                     k.getSoDienThoai().contains(keyword) ||
@@ -87,13 +89,6 @@ public class KhachPanel extends JPanel {
             }
         }
     }
-
-        private void showEditForm() {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng để sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-                return;
-        }
 
 
         private void showAddForm() {
@@ -135,7 +130,7 @@ public class KhachPanel extends JPanel {
                 int phongId = Integer.parseInt(selected.split(" - ")[0]);
 
                 KhachThueDTO khachMoi = new KhachThueDTO(hoTen, sdt, cccd, phongId);
-                if (khachController.addKhachThue(khachMoi)) {
+                if (khachbus.addKhachThue(khachMoi)) {
                     JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công!");
                     loadData();
                 } else {
@@ -156,7 +151,7 @@ public class KhachPanel extends JPanel {
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if(confirm == JOptionPane.YES_OPTION) {
             int id = (int) model.getValueAt(selectedRow, 0);
-            if(khachController.deleteKhachThue(id)) {
+            if(khachbus.deleteKhachThue(id)) {
                 JOptionPane.showMessageDialog(this, "Xóa thành công!");
                 loadData();
             } else {

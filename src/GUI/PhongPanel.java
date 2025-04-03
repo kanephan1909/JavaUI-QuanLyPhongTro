@@ -1,5 +1,8 @@
 package GUI;
 
+import BUS.PhongBUS;
+import DTO.PhongDTO;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -10,7 +13,7 @@ public class PhongPanel extends JPanel {
     private DefaultTableModel tableModel;
     private JTextField txtSearch;
     private JButton btnSearch, btnAdd, btnEdit, btnDelete;
-    private ArrayList<Phong> danhSachPhong;
+    private ArrayList<PhongDTO> danhSachPhong;
     private PhongBUS phongBUS;
     
     public PhongPanel() {
@@ -61,9 +64,9 @@ public class PhongPanel extends JPanel {
         btnDelete.addActionListener(e -> deleteRoom());
     }
     
-    private void loadData(ArrayList<Phong> ds) {
+    private void loadData(ArrayList<PhongDTO> ds) {
         tableModel.setRowCount(0);
-        for (Phong p : ds) {
+        for (PhongDTO p : ds) {
             tableModel.addRow(new Object[]{ p.getMaPhong(), p.getTenPhong(), p.getGiaThue(), p.getTrangThai() });
         }
     }
@@ -75,8 +78,8 @@ public class PhongPanel extends JPanel {
             loadData(phongBUS.getAllPhong());
             return;
         }
-        ArrayList<Phong> filtered = new ArrayList<>();
-        for (Phong p : phongBUS.getAllPhong()) {
+        ArrayList<PhongDTO> filtered = new ArrayList<>();
+        for (PhongDTO p : phongBUS.getAllPhong()) {
             if(p.getTenPhong().toLowerCase().contains(keyword)) {
                 filtered.add(p);
             }
@@ -110,7 +113,7 @@ public class PhongPanel extends JPanel {
             try {
                 int giaThue = Integer.parseInt(giaThueStr);
                 String trangThai = (String) cmbTrangThai.getSelectedItem();
-                Phong newPhong = new Phong(0, tenPhong, giaThue, trangThai);
+                PhongDTO newPhong = new PhongDTO(0, tenPhong, giaThue, trangThai);
                 if(phongBUS.themPhong(newPhong)){
                     JOptionPane.showMessageDialog(this, "Thêm phòng thành công!");
                     danhSachPhong = phongBUS.getAllPhong();
@@ -161,7 +164,7 @@ public class PhongPanel extends JPanel {
             try {
                 int giaThue = Integer.parseInt(giaThueStr);
                 String trangThai = (String) cmbTrangThai.getSelectedItem();
-                Phong editedPhong = new Phong(id, tenPhong, giaThue, trangThai);
+                PhongDTO editedPhong = new PhongDTO(id, tenPhong, giaThue, trangThai);
                 if(phongBUS.suaPhong(editedPhong)) {
                     JOptionPane.showMessageDialog(this, "Cập nhật phòng thành công!");
                     danhSachPhong = phongBUS.getAllPhong();
