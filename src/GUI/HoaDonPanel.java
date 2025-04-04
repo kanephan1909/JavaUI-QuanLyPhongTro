@@ -3,7 +3,6 @@ package GUI;
 import BUS.HoaDonBUS;
 import BUS.KhachThueBUS;
 import DTO.HoaDonDTO;
-import DTO.KhachThueDTO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -26,6 +25,7 @@ public class HoaDonPanel extends JPanel {
     public HoaDonPanel() {
         initComponents();
         loadData();
+
     }
 
     private void initComponents() {
@@ -69,6 +69,7 @@ public class HoaDonPanel extends JPanel {
         btnThem = new JButton("Thêm");
         btnSua = new JButton("Sửa");
         btnXoa = new JButton("Xóa");
+
 
         buttonPanel.add(btnThem);
         buttonPanel.add(btnSua);
@@ -154,34 +155,79 @@ public class HoaDonPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn hóa đơn cần sửa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         HoaDonDTO hd = danhSachHoaDon.get(selectedRow);
 
-        try {
-            float tienDien = Float.parseFloat(JOptionPane.showInputDialog(this, "Nhập tiền điện:", hd.getTienDien()));
-            float tienNuoc = Float.parseFloat(JOptionPane.showInputDialog(this, "Nhập tiền nước:", hd.getTienNuoc()));
-            float tienPhong = Float.parseFloat(JOptionPane.showInputDialog(this, "Nhập tiền phòng:", hd.getTienPhong()));
-            String thangNam = JOptionPane.showInputDialog(this, "Nhập tháng (MM/YYYY):", hd.getThangNam());
-            String trangThai = JOptionPane.showInputDialog(this, "Nhập trạng thái:", hd.getTrangThai());
+        // Tạo form trong JDialog
+        Window window = SwingUtilities.getWindowAncestor(this);
+        JDialog dialog = new JDialog((Frame) window, "Sửa Hóa Đơn", true);
+        dialog.setSize(400, 350);
+        dialog.setLayout(new GridLayout(7, 2, 10, 10));
+        dialog.setLocationRelativeTo(this);
 
-            float tongTien = tienDien + tienNuoc + tienPhong;
+        // Tạo các trường nhập dữ liệu
+        JTextField tfTienDien = new JTextField(String.valueOf(hd.getTienDien()));
+        JTextField tfTienNuoc = new JTextField(String.valueOf(hd.getTienNuoc()));
+        JTextField tfTienPhong = new JTextField(String.valueOf(hd.getTienPhong()));
+        JTextField tfThangNam = new JTextField(hd.getThangNam());
+        String[] trangThaiOptions = {"Chưa thanh toán", "Đã thanh toán", "Quá hạn"};
+        JComboBox<String> cbTrangThai = new JComboBox<>(trangThaiOptions);
+        cbTrangThai.setSelectedItem(hd.getTrangThai());
 
-            hd.setTienDien(tienDien);
-            hd.setTienNuoc(tienNuoc);
-            hd.setTienPhong(tienPhong);
-            hd.setTongTien(tongTien);
-            hd.setThangNam(thangNam);
-            hd.setTrangThai(trangThai);
 
-            if (hoaDonBUS.updateHoaDon(hd)) {
-                capNhatTable();
-                JOptionPane.showMessageDialog(this, "Cập nhật hóa đơn thành công!");
-            } else {
-                JOptionPane.showMessageDialog(this, "Cập nhật thất bại! Kiểm tra tổng tiền.");
+        // Add các thành phần vào dialog
+        dialog.add(new JLabel("Tiền điện:"));
+        dialog.add(tfTienDien);
+        dialog.add(new JLabel("Tiền nước:"));
+        dialog.add(tfTienNuoc);
+        dialog.add(new JLabel("Tiền phòng:"));
+        dialog.add(tfTienPhong);
+        dialog.add(new JLabel("Tháng (MM/YYYY):"));
+        dialog.add(tfThangNam);
+        dialog.add(new JLabel("Trạng thái:"));
+        dialog.add(cbTrangThai);
+
+        JButton btnLuu = new JButton("Lưu");
+        JButton btnHuy = new JButton("Hủy");
+
+        dialog.add(btnLuu);
+        dialog.add(btnHuy);
+
+        btnLuu.addActionListener(e -> {
+            try {
+                float tienDien = Float.parseFloat(tfTienDien.getText());
+                float tienNuoc = Float.parseFloat(tfTienNuoc.getText());
+                float tienPhong = Float.parseFloat(tfTienPhong.getText());
+                String thangNam = tfThangNam.getText();
+                String trangThai = (String) cbTrangThai.getSelectedItem();
+
+                float tongTien = tienDien + tienNuoc + tienPhong;
+
+                hd.setTienDien(tienDien);
+                hd.setTienNuoc(tienNuoc);
+                hd.setTienPhong(tienPhong);
+                hd.setTongTien(tongTien);
+                hd.setThangNam(thangNam);
+                hd.setTrangThai(trangThai);
+
+                if (hoaDonBUS.updateHoaDon(hd)) {
+                    capNhatTable();
+                    JOptionPane.showMessageDialog(this, "Cập nhật hóa đơn thành công!");
+                    dialog.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(dialog, "Cập nhật thất bại! Kiểm tra dữ liệu.");
+                }
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(dialog, "Vui lòng nhập đúng định dạng số!");
             }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng số!");
-        }
+        });
+
+        btnHuy.addActionListener(e -> dialog.dispose());
+
+        dialog.setVisible(true);
     }
+
 
     private void xoaHoaDon() {
         int selectedRow = table.getSelectedRow();

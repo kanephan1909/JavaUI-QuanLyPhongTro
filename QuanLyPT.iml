@@ -16,5 +16,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="swing-datetime-picker-2.0.0" level="project" />
+    <orderEntry type="library" name="miglayout-swing-11.4.2" level="project" />
   </component>
 </module>

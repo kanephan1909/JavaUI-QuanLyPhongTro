@@ -1,9 +1,6 @@
 <component name="libraryTable">
   <library name="libs">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libs/mssql-jdbc-12.8.1.jre11.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/flatlaf-3.5.4.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
   </library>

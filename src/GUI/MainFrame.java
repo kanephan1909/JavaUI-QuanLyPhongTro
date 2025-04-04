@@ -25,9 +25,9 @@ public class MainFrame extends JFrame {
             e.printStackTrace();
         }
 
-        setTitle("Quản lý phòng trọ");
+        setTitle("QUẢN LÝ PHÒNG TRỌ - NHÀ TRỌ SẠCH SẼ");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 600);
+        setSize(1280, 720);
         setLayout(new BorderLayout());
 
         JPanel sidebar = createSidebar();
@@ -35,7 +35,7 @@ public class MainFrame extends JFrame {
 
         // Cập nhật contentPanel Flat Design
         contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(Color.WHITE); // Nền trắng sáng
+        contentPanel.setBackground(new Color(20, 25, 95)); // Nền trắng sáng
 
         JLabel welcomeLabel = new JLabel(
                 "<html><div style='text-align: center; color: #555;'>Xin chào!<br>Vui lòng chọn một chức năng để bắt đầu quản lý phòng trọ.</div></html>");
@@ -49,47 +49,55 @@ public class MainFrame extends JFrame {
 
     // Menu
     private JPanel createSidebar() {
+        // Sidebar chính
         JPanel sidebar = new JPanel(new BorderLayout());
-        sidebar.setBackground(new Color(245, 245, 245)); // Màu xám nhạt
-        sidebar.setPreferredSize(new Dimension(220, getHeight()));
+        sidebar.setBackground(new Color(235, 174, 71)); // Màu nền sidebar đậm
+        sidebar.setPreferredSize(new Dimension(220, 0));
 
-        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        JLabel titleLabel = new JLabel("Quản Lý Phòng Trọ");
+        // Title Panel
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 50));
+        titlePanel.setBackground(new Color(235, 174, 71));
+
+        JLabel titleLabel = new JLabel("NHÀ TRỌ SẠCH SẼ");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        titlePanel.setBackground(new Color(245, 245, 245));
+        titleLabel.setForeground(Color.WHITE);
+
         titlePanel.add(titleLabel);
         sidebar.add(titlePanel, BorderLayout.NORTH);
 
+        // Menu Panel
         JPanel menuPanel = new JPanel(new GridBagLayout());
-        menuPanel.setBackground(new Color(245, 245, 245));
-        menuPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+        menuPanel.setBackground(new Color(235, 174, 71)); // Màu section menu
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 10, 5, 10);
-        gbc.weighty = 1;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.weightx = 1;
+        gbc.weighty = 0;
 
-        JLabel sectionLabel = new JLabel("Menu");
-        sectionLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        sectionLabel.setForeground(new Color(100, 100, 100));
-        menuPanel.add(sectionLabel, gbc);
-        gbc.gridy++;
-
+        // Nút menu
+        addSidebarButton(menuPanel, "Trang Chủ", new HomePanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Hóa đơn", new GUI.HoaDonPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Khách hàng", new GUI.KhachPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Phòng", new GUI.PhongPanel(), gbc);
 
-        sidebar.add(menuPanel, BorderLayout.NORTH);
+        // Thêm panel rỗng để đẩy các nút lên đầu
+        gbc.weighty = 1;
+        gbc.gridy++;
+        menuPanel.add(Box.createVerticalGlue(), gbc);
+
+        sidebar.add(menuPanel, BorderLayout.CENTER);
         return sidebar;
     }
+
 
     private JLabel createMenuSection(String text) {
         JLabel sectionLabel = new JLabel(text);
         sectionLabel.setFont(new Font("Arial", Font.BOLD, 12));
-        sectionLabel.setForeground(new Color(100, 100, 100));
+        sectionLabel.setForeground(new Color(20, 25, 95));
         return sectionLabel;
     }
 
@@ -146,4 +154,9 @@ public class MainFrame extends JFrame {
         buttonPanel.getComponent(0).setForeground(Color.WHITE);
         activePanel = buttonPanel;
     }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
+    }
+
 }
