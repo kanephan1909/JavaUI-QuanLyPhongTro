@@ -5,15 +5,17 @@ import java.time.LocalDate;
 public class HoaDonDTO {
     private int id;
     private int maHopDong;
-    private LocalDate thangNam;
-    private BigDecimal tienPhong;
-    private BigDecimal tienDien;
-    private BigDecimal tienNuoc;
-    private BigDecimal tongTien;
+    private String thangNam;
+    private float tienPhong;
+    private float tienDien;
+    private float tienNuoc;
+    private float tongTien;
     private String trangThai;
 
     // Constructor
-    public HoaDonDTO(int id, int maHopDong, LocalDate thangNam, BigDecimal tienPhong, BigDecimal tienDien, BigDecimal tienNuoc, BigDecimal tongTien, String trangThai) {
+
+
+    public HoaDonDTO(int id, int maHopDong, String thangNam, float tienPhong, float tienDien, float tienNuoc, float tongTien, String trangThai) {
         this.id = id;
         this.maHopDong = maHopDong;
         this.thangNam = thangNam;
@@ -25,6 +27,7 @@ public class HoaDonDTO {
     }
 
     // Getters and Setters
+
     public int getId() {
         return id;
     }
@@ -41,43 +44,43 @@ public class HoaDonDTO {
         this.maHopDong = maHopDong;
     }
 
-    public LocalDate getThangNam() {
+    public String getThangNam() {
         return thangNam;
     }
 
-    public void setThangNam(LocalDate thangNam) {
+    public void setThangNam(String thangNam) {
         this.thangNam = thangNam;
     }
 
-    public BigDecimal getTienPhong() {
+    public float getTienPhong() {
         return tienPhong;
     }
 
-    public void setTienPhong(BigDecimal tienPhong) {
+    public void setTienPhong(float tienPhong) {
         this.tienPhong = tienPhong;
     }
 
-    public BigDecimal getTienDien() {
+    public float getTienDien() {
         return tienDien;
     }
 
-    public void setTienDien(BigDecimal tienDien) {
+    public void setTienDien(float tienDien) {
         this.tienDien = tienDien;
     }
 
-    public BigDecimal getTienNuoc() {
+    public float getTienNuoc() {
         return tienNuoc;
     }
 
-    public void setTienNuoc(BigDecimal tienNuoc) {
+    public void setTienNuoc(float tienNuoc) {
         this.tienNuoc = tienNuoc;
     }
 
-    public BigDecimal getTongTien() {
+    public float getTongTien() {
         return tongTien;
     }
 
-    public void setTongTien(BigDecimal tongTien) {
+    public void setTongTien(float tongTien) {
         this.tongTien = tongTien;
     }
 

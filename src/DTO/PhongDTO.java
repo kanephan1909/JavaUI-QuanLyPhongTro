@@ -7,13 +7,13 @@ public class PhongDTO {
     private String tenPhong;
     private String loaiPhong;
     private int dienTich;
-    private BigDecimal giaPhong;
+    private float giaPhong;
     private String moTa;
     private String tinhTrang;
     private int khuVucID;
 
     // Constructor
-    public PhongDTO(int id, String maPhong, String tenPhong, String loaiPhong, int dienTich, BigDecimal giaPhong, String moTa, String tinhTrang, int khuVucID) {
+    public PhongDTO(int id, String maPhong, String tenPhong, String loaiPhong, int dienTich, float giaPhong, String moTa, String tinhTrang, int khuVucID) {
         this.id = id;
         this.maPhong = maPhong;
         this.tenPhong = tenPhong;
@@ -66,11 +66,11 @@ public class PhongDTO {
         this.dienTich = dienTich;
     }
 
-    public BigDecimal getGiaPhong() {
+    public float getGiaPhong() {
         return giaPhong;
     }
 
-    public void setGiaPhong(BigDecimal giaPhong) {
+    public void setGiaPhong(float giaPhong) {
         this.giaPhong = giaPhong;
     }
 

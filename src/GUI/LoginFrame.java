@@ -2,7 +2,7 @@
 package GUI;
 import javax.swing.*;
 
-import DTO.DatabaseConnection;
+import DAL.DatabaseConnection;
 import images.component.RoundedButton;
 
 import java.awt.*;
@@ -235,7 +235,7 @@ public class LoginFrame extends JFrame {
             return false;
         }
 
-        String sql = "SELECT MatKhau FROM TaiKhoan WHERE TaiKhoan=?";
+        String sql = "SELECT MatKhau FROM TaiKhoan WHERE TenDangNhap=?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, userName);

@@ -2,7 +2,7 @@ package GUI;
 
 import javax.swing.*;
 
-import DTO.DatabaseConnection;
+import DAL.DatabaseConnection;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;

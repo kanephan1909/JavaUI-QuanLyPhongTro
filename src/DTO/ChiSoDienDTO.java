@@ -5,12 +5,14 @@ import java.util.Date;
 public class ChiSoDienDTO {
     private int id;
     private int khachThueID;
-    private Date thangNam;
-    private BigDecimal chiSoCu;
-    private BigDecimal chiSoMoi;
+    private String thangNam;
+    private float chiSoCu;
+    private float chiSoMoi;
 
     // Constructor
-    public ChiSoDienDTO(int id, int khachThueID, Date thangNam, BigDecimal chiSoCu, BigDecimal chiSoMoi) {
+
+
+    public ChiSoDienDTO(int id, int khachThueID, String thangNam, float chiSoCu, float chiSoMoi) {
         this.id = id;
         this.khachThueID = khachThueID;
         this.thangNam = thangNam;
@@ -19,6 +21,7 @@ public class ChiSoDienDTO {
     }
 
     // Getter and Setter
+
     public int getId() {
         return id;
     }
@@ -35,27 +38,27 @@ public class ChiSoDienDTO {
         this.khachThueID = khachThueID;
     }
 
-    public Date getThangNam() {
+    public String getThangNam() {
         return thangNam;
     }
 
-    public void setThangNam(Date thangNam) {
+    public void setThangNam(String thangNam) {
         this.thangNam = thangNam;
     }
 
-    public BigDecimal getChiSoCu() {
+    public float getChiSoCu() {
         return chiSoCu;
     }
 
-    public void setChiSoCu(BigDecimal chiSoCu) {
+    public void setChiSoCu(float chiSoCu) {
         this.chiSoCu = chiSoCu;
     }
 
-    public BigDecimal getChiSoMoi() {
+    public float getChiSoMoi() {
         return chiSoMoi;
     }
 
-    public void setChiSoMoi(BigDecimal chiSoMoi) {
+    public void setChiSoMoi(float chiSoMoi) {
         this.chiSoMoi = chiSoMoi;
     }
 }

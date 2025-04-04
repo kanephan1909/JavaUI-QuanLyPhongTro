@@ -22,6 +22,17 @@ public class KhachThueDTO {
         this.ngayTra = ngayTra;
     }
 
+    // Constructor dùng khi thêm khách mới
+    public KhachThueDTO(String hoTen, String soDienThoai, String cccd, int phongID) {
+        this.hoTen = hoTen;
+        this.soDienThoai = soDienThoai;
+        this.cccd = cccd;
+        this.phongID = phongID;
+        this.ngayThue = java.time.LocalDate.now().toString(); // Ngày thuê là hôm nay
+        this.ngayTra = "";
+    }
+
+
     // Getters and Setters
     public int getId() {
         return id;

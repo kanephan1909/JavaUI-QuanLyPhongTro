@@ -5,15 +5,17 @@ public class HopDongDTO {
     private int id;
     private int maNguoiThue;
     private int maPhong;
-    private Date ngayLap;
+    private String ngayLap;
 
 
-    private Date ngayBatDau;
-    private Date ngayKetThuc;
+    private String ngayBatDau;
+    private String ngayKetThuc;
     private double tienDatCoc;
 
     // Constructor
-    public HopDongDTO(int id, int maNguoiThue, int maPhong, Date ngayLap, Date ngayBatDau, Date ngayKetThuc, double tienDatCoc) {
+
+
+    public HopDongDTO(int id, int maNguoiThue, int maPhong, String ngayLap, String ngayBatDau, String ngayKetThuc, double tienDatCoc) {
         this.id = id;
         this.maNguoiThue = maNguoiThue;
         this.maPhong = maPhong;
@@ -24,6 +26,7 @@ public class HopDongDTO {
     }
 
     // Getter and Setter
+
     public int getId() {
         return id;
     }
@@ -48,27 +51,27 @@ public class HopDongDTO {
         this.maPhong = maPhong;
     }
 
-    public Date getNgayLap() {
+    public String getNgayLap() {
         return ngayLap;
     }
 
-    public void setNgayLap(Date ngayLap) {
+    public void setNgayLap(String ngayLap) {
         this.ngayLap = ngayLap;
     }
 
-    public Date getNgayBatDau() {
+    public String getNgayBatDau() {
         return ngayBatDau;
     }
 
-    public void setNgayBatDau(Date ngayBatDau) {
+    public void setNgayBatDau(String ngayBatDau) {
         this.ngayBatDau = ngayBatDau;
     }
 
-    public Date getNgayKetThuc() {
+    public String getNgayKetThuc() {
         return ngayKetThuc;
     }
 
-    public void setNgayKetThuc(Date ngayKetThuc) {
+    public void setNgayKetThuc(String ngayKetThuc) {
         this.ngayKetThuc = ngayKetThuc;
     }
 

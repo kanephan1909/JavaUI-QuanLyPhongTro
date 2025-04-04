@@ -40,7 +40,7 @@ public class KhachPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         // Bảng khách thuê
-        String[] columns = {"ID", "Họ tên", "SĐT", "CCCD", "Phòng"};
+        String[] columns = {"ID", "Họ tên", "SĐT", "CCCD", "Phòng", "Ngày thuê"};
         model = new DefaultTableModel(columns, 0) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -69,29 +69,30 @@ public class KhachPanel extends JPanel {
         model.setRowCount(0);
         List<KhachThueDTO> list = khachbus.getAllKhachThue();
         for (KhachThueDTO k : list) {
-            model.addRow(new Object[] { k.getId(), k.getHoTen(), k.getSoDienThoai(), k.getCccd(), k.getPhongID() });
+            model.addRow(new Object[] {
+                    k.getId(), k.getHoTen(), k.getSoDienThoai(),
+                    k.getCccd(), k.getPhongID(), k.getNgayThue()
+            });
         }
     }
 
     private void searchCustomer() {
         String keyword = txtSearch.getText().trim().toLowerCase();
-        if(keyword.isEmpty()){
-            loadData();
-            return;
-        }
         model.setRowCount(0);
         List<KhachThueDTO> list = khachbus.getAllKhachThue();
         for (KhachThueDTO k : list) {
-            if(k.getHoTen().toLowerCase().contains(keyword) ||
-                    k.getSoDienThoai().contains(keyword) ||
-                    k.getCccd().contains(keyword)) {
-                model.addRow(new Object[] { k.getId(), k.getHoTen(), k.getSoDienThoai(), k.getCccd(), k.getPhongID() });
+            if (k.getHoTen().toLowerCase().contains(keyword)
+                    || k.getSoDienThoai().contains(keyword)
+                    || k.getCccd().contains(keyword)) {
+                model.addRow(new Object[] {
+                        k.getId(), k.getHoTen(), k.getSoDienThoai(),
+                        k.getCccd(), k.getPhongID(), k.getNgayThue()
+                });
             }
         }
     }
 
-
-        private void showAddForm() {
+    private void showAddForm() {
         List<PhongDTO> dsPhongTrong = phongBUS.getPhongTrong();
 
         JTextField txtHoTen = new JTextField(20);
@@ -116,9 +117,7 @@ public class KhachPanel extends JPanel {
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Thêm khách hàng", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
-            if (txtHoTen.getText().trim().isEmpty() ||
-                    txtSdt.getText().trim().isEmpty() ||
-                    txtCccd.getText().trim().isEmpty()) {
+            if (txtHoTen.getText().trim().isEmpty() || txtSdt.getText().trim().isEmpty() || txtCccd.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -138,6 +137,60 @@ public class KhachPanel extends JPanel {
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void showEditForm() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng để sửa!");
+            return;
+        }
+
+        int id = (int) model.getValueAt(selectedRow, 0);
+        String hoTen = (String) model.getValueAt(selectedRow, 1);
+        String sdt = (String) model.getValueAt(selectedRow, 2);
+        String cccd = (String) model.getValueAt(selectedRow, 3);
+        int phongId = (int) model.getValueAt(selectedRow, 4);
+        String ngayThue = (String) model.getValueAt(selectedRow, 5);
+
+        JTextField txtHoTen = new JTextField(hoTen, 20);
+        JTextField txtSdt = new JTextField(sdt, 20);
+        JTextField txtCccd = new JTextField(cccd, 20);
+        JTextField txtPhong = new JTextField(String.valueOf(phongId));
+        txtPhong.setEnabled(false);
+
+        JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
+        panel.add(new JLabel("Họ tên:"));
+        panel.add(txtHoTen);
+        panel.add(new JLabel("Số điện thoại:"));
+        panel.add(txtSdt);
+        panel.add(new JLabel("CCCD:"));
+        panel.add(txtCccd);
+        panel.add(new JLabel("Phòng:"));
+        panel.add(txtPhong);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Chỉnh sửa khách hàng", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                KhachThueDTO updated = new KhachThueDTO(
+                        id,
+                        txtHoTen.getText().trim(),
+                        txtSdt.getText().trim(),
+                        txtCccd.getText().trim(),
+                        phongId,
+                        ngayThue,
+                        "" // Ngày trả có thể xử lý sau nếu cần
+                );
+                if (khachbus.updateKhachThue(updated)) {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+                    loadData();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thất bại!");
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
