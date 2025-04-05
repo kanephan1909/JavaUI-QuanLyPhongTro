@@ -33,9 +33,10 @@ public class MainFrame extends JFrame {
         JPanel sidebar = createSidebar();
         add(sidebar, BorderLayout.WEST);
 
+
         // Cập nhật contentPanel Flat Design
         contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(new Color(20, 25, 95)); // Nền trắng sáng
+        contentPanel.setBackground(new Color(235, 174, 71)); // Nền trắng sáng
 
         JLabel welcomeLabel = new JLabel(
                 "<html><div style='text-align: center; color: #555;'>Xin chào!<br>Vui lòng chọn một chức năng để bắt đầu quản lý phòng trọ.</div></html>");
@@ -51,23 +52,32 @@ public class MainFrame extends JFrame {
     private JPanel createSidebar() {
         // Sidebar chính
         JPanel sidebar = new JPanel(new BorderLayout());
-        sidebar.setBackground(new Color(235, 174, 71)); // Màu nền sidebar đậm
-        sidebar.setPreferredSize(new Dimension(220, 0));
+        sidebar.setBackground(new Color(20, 25, 95)); // Màu nền sidebar tối (đậm hơn)
+        sidebar.setPreferredSize(new Dimension(260, 0)); // Kích thước của sidebar
 
         // Title Panel
-        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 50));
-        titlePanel.setBackground(new Color(235, 174, 71));
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 50));
+        titlePanel.setBackground(new Color(20, 25, 95)); // Giữ màu nền của title
 
-        JLabel titleLabel = new JLabel("NHÀ TRỌ SẠCH SẼ");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        titleLabel.setForeground(Color.WHITE);
 
-        titlePanel.add(titleLabel);
+        // Tải icon từ file và thay đổi kích thước
+        Icon icon = new ImageIcon("src/images/logo.png");  // Đảm bảo đường dẫn chính xác
+        Image img = ((ImageIcon) icon).getImage();  // Lấy hình ảnh từ icon
+        Image scaledImg = img.getScaledInstance(220, 80, Image.SCALE_SMOOTH);  // Thay đổi kích thước icon (100x100 pixels)
+
+        // Tạo lại ImageIcon với kích thước mới
+        icon = new ImageIcon(scaledImg);
+
+        // Thêm icon vào titlePanel
+        JLabel iconLabel = new JLabel(icon);
+        titlePanel.add(iconLabel);  // Đảm bảo icon có kích thước đã thay đổi
+
         sidebar.add(titlePanel, BorderLayout.NORTH);
 
-        // Menu Panel
+
+        // Menu Panel (Chứa các mục menu)
         JPanel menuPanel = new JPanel(new GridBagLayout());
-        menuPanel.setBackground(new Color(235, 174, 71)); // Màu section menu
+        menuPanel.setBackground(new Color(20, 25, 95)); // Giữ màu nền của menu
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -83,6 +93,9 @@ public class MainFrame extends JFrame {
         addSidebarButton(menuPanel, "Quản lý Hóa đơn", new GUI.HoaDonPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Khách hàng", new GUI.KhachPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Phòng", new GUI.PhongPanel(), gbc);
+        addSidebarButton(menuPanel, "Quản lý Hợp Đồng", null, gbc);
+        addSidebarButton(menuPanel, "Quản lý Khu Vực", null, gbc);
+        addSidebarButton(menuPanel, "Logout", null, gbc); // Thêm mục "Logout"
 
         // Thêm panel rỗng để đẩy các nút lên đầu
         gbc.weighty = 1;
@@ -93,7 +106,6 @@ public class MainFrame extends JFrame {
         return sidebar;
     }
 
-
     private JLabel createMenuSection(String text) {
         JLabel sectionLabel = new JLabel(text);
         sectionLabel.setFont(new Font("Arial", Font.BOLD, 12));
@@ -103,41 +115,56 @@ public class MainFrame extends JFrame {
 
     // Button
     private void addSidebarButton(JPanel sidebar, String text, JPanel panel, GridBagConstraints gbc) {
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        buttonPanel.setPreferredSize(new Dimension(180, 40));
-        buttonPanel.setBackground(new Color(230, 230, 230)); // Xám nhẹ
+        // Tạo nút với FlowLayout
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BorderLayout());  // Dùng BorderLayout để dễ căn chỉnh các phần tử
+        buttonPanel.setPreferredSize(new Dimension(240, 40)); // Chiều rộng cố định cho nút, vừa đủ chiếm chiều rộng sidebar
+        buttonPanel.setBackground(new Color(235, 174, 71)); // Màu nền của nút
 
+        // Tạo và thêm văn bản vào nút
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        buttonPanel.add(label);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 20)); // Cỡ chữ dễ đọc
+        label.setForeground(Color.WHITE); // Màu chữ trắng
+        label.setHorizontalAlignment(SwingConstants.CENTER); // Căn chữ vào giữa
+        buttonPanel.add(label, BorderLayout.CENTER);  // Đặt chữ vào giữa
 
-        buttonPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        buttonPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
+        // Thêm icon vào nút (nếu cần)
+        Icon icon = new ImageIcon("src/images/component/file-solid.svg");  // Đảm bảo đường dẫn chính xác
+        JLabel iconLabel = new JLabel(icon);
+        buttonPanel.add(iconLabel, BorderLayout.WEST);  // Đặt icon vào bên trái nút
 
+        buttonPanel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Thêm hiệu ứng khi hover
+        buttonPanel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0), 1)); // Viền nhẹ cho nút
+
+        // Hiệu ứng hover cho nút
         buttonPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                switchPanel(panel);
-                highlightButton(buttonPanel);
+                if (panel != null) {
+                    switchPanel(panel); // Chuyển panel khi click
+                }
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                buttonPanel.setBackground(new Color(180, 200, 255)); // Xanh nhạt khi hover
+                buttonPanel.setBackground(new Color(214, 148, 17)); // Màu khi hover
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 if (activePanel != buttonPanel) {
-                    buttonPanel.setBackground(new Color(230, 230, 230));
+                    buttonPanel.setBackground(new Color(235, 174, 71)); // Màu gốc khi không hover
                 }
             }
         });
 
-        sidebar.add(buttonPanel, gbc);
-        gbc.gridy++;
+        sidebar.add(buttonPanel, gbc); // Thêm nút vào sidebar
+        gbc.gridy++; // Di chuyển xuống dòng tiếp theo trong GridBagLayout
     }
 
+
+
+    // Hàm chuyển đổi giữa các panel
     private void switchPanel(JPanel panel) {
         contentPanel.removeAll();
         contentPanel.add(panel, BorderLayout.CENTER);
@@ -145,15 +172,16 @@ public class MainFrame extends JFrame {
         contentPanel.repaint();
     }
 
-    private void highlightButton(JPanel buttonPanel) {
-        if (activePanel != null) {
-            activePanel.setBackground(Color.WHITE);
-            activePanel.getComponent(0).setForeground(Color.BLACK);
-        }
-        buttonPanel.setBackground(new Color(100, 149, 237));
-        buttonPanel.getComponent(0).setForeground(Color.WHITE);
-        activePanel = buttonPanel;
-    }
+    // Hàm làm sáng nút khi nhấn
+//    private void highlightButton(JPanel buttonPanel) {
+//        if (activePanel != null) {
+//            activePanel.setBackground(new Color(186, 132, 40)); // Màu gốc của nút
+//            activePanel.getComponent(0).setForeground(Color.WHITE); // Đổi màu chữ
+//        }
+//        buttonPanel.setBackground(new Color(100, 149, 237)); // Màu xanh dương khi chọn
+//        buttonPanel.getComponent(0).setForeground(Color.WHITE); // Đổi màu chữ thành trắng khi chọn
+//        activePanel = buttonPanel;
+//    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));

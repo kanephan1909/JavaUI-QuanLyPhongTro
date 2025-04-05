@@ -37,7 +37,7 @@ public class PhongPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         // Center panel: bảng hiển thị
-        String[] columns = { "ID", "Mã Phòng", "Tên phòng", "Giá thuê", "Trạng thái" };
+        String[] columns = { "ID", "Mã Phòng", "Tên phòng","Loại Phòng", "Giá thuê", "Trạng thái" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -78,6 +78,7 @@ public class PhongPanel extends JPanel {
                     p.getId(),
                     p.getMaPhong(),
                     p.getTenPhong(),
+                    p.getLoaiPhong(),
                     p.getGiaPhong(),
                     p.getTinhTrang()
             });
@@ -103,13 +104,16 @@ public class PhongPanel extends JPanel {
         JTextField txtMaPhong = new JTextField();
         JTextField txtTenPhong = new JTextField();
         JTextField txtGiaThue = new JTextField();
+        JTextField txtLoaiPhong = new JTextField();
         JComboBox<String> cmbTrangThai = new JComboBox<>(new String[]{"Trống", "Đã thuê"});
 
-        JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
+        JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
         panel.add(new JLabel("Mã phòng:"));
         panel.add(txtMaPhong);
         panel.add(new JLabel("Tên phòng:"));
         panel.add(txtTenPhong);
+        panel.add(new JLabel("Loại phòng:"));
+        panel.add(txtLoaiPhong);
         panel.add(new JLabel("Giá thuê:"));
         panel.add(txtGiaThue);
         panel.add(new JLabel("Trạng thái:"));

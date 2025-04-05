@@ -3,12 +3,18 @@ package GUI;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.text.ParseException;
 import java.util.List;
 
 import BUS.KhachThueBUS;
 import BUS.PhongBUS;
 import DTO.KhachThueDTO;
 import DTO.PhongDTO;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import com.toedter.calendar.JDateChooser;
+
+
 
 public class KhachPanel extends JPanel {
     private JTable table;
@@ -33,6 +39,19 @@ public class KhachPanel extends JPanel {
         JLabel lblSearch = new JLabel("Tìm kiếm khách:");
         txtSearch = new JTextField();
         btnSearch = new JButton("Tìm kiếm");
+
+        setLayout(new BorderLayout(10, 10)); // Sử dụng BorderLayout và thêm khoảng cách giữa các phần tử
+        JPanel topPanelUP = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+        // Thêm chiều rộng cho topPanel
+        topPanelUP.setPreferredSize(new Dimension(200, 100));
+        topPanelUP.setBackground(new Color(221, 156, 43));
+
+        JLabel lblHome = new JLabel("<html><div style='text-align: center;margin-top: 18px; color: #fff;'>Trang Chủ</div></html>");
+        lblHome.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        lblHome.setForeground(Color.WHITE); // Màu chữ trắng cho label
+
+        topPanel.add(lblHome, BorderLayout.CENTER);
+        add(topPanelUP, BorderLayout.NORTH);
 
         topPanel.add(lblSearch, BorderLayout.WEST);
         topPanel.add(txtSearch, BorderLayout.CENTER);
@@ -148,6 +167,7 @@ public class KhachPanel extends JPanel {
             return;
         }
 
+        // Lấy dữ liệu từ hàng được chọn
         int id = (int) model.getValueAt(selectedRow, 0);
         String hoTen = (String) model.getValueAt(selectedRow, 1);
         String sdt = (String) model.getValueAt(selectedRow, 2);
@@ -155,13 +175,26 @@ public class KhachPanel extends JPanel {
         int phongId = (int) model.getValueAt(selectedRow, 4);
         String ngayThue = (String) model.getValueAt(selectedRow, 5);
 
+        // Các trường nhập liệu
         JTextField txtHoTen = new JTextField(hoTen, 20);
         JTextField txtSdt = new JTextField(sdt, 20);
         JTextField txtCccd = new JTextField(cccd, 20);
         JTextField txtPhong = new JTextField(String.valueOf(phongId));
         txtPhong.setEnabled(false);
 
-        JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
+        // Tạo JDateChooser cho ngày thuê
+        JDateChooser dateChooser = new JDateChooser();
+        try {
+            // Nếu ngày thuê có sẵn, set giá trị cho JDateChooser
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = sdf.parse(ngayThue); // Chuyển đổi từ String thành Date
+            dateChooser.setDate(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // Tạo panel với GridLayout
+        JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
         panel.add(new JLabel("Họ tên:"));
         panel.add(txtHoTen);
         panel.add(new JLabel("Số điện thoại:"));
@@ -170,18 +203,37 @@ public class KhachPanel extends JPanel {
         panel.add(txtCccd);
         panel.add(new JLabel("Phòng:"));
         panel.add(txtPhong);
+        panel.add(new JLabel("Ngày Thuê:"));
+        panel.add(dateChooser);
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Chỉnh sửa khách hàng", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             try {
+                // Lấy ngày thuê từ JDateChooser
+                Date selectedDate = dateChooser.getDate();
+                if (selectedDate == null) {
+                    JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày thuê!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return; // Nếu ngày thuê không được chọn, thoát ra
+                }
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String ngayThueMoi = sdf.format(selectedDate); // Chuyển lại thành String
+
+                // Kiểm tra và xử lý ngày trả (ngày trả có thể là null)
+                String ngayTra = ""; // Nếu không có ngày trả, set giá trị rỗng hoặc null
+                if (ngayTra.isEmpty()) {
+                    ngayTra = null; // Nếu ngày trả không có, để nó là null
+                }
+
+                // Cập nhật thông tin khách hàng
                 KhachThueDTO updated = new KhachThueDTO(
                         id,
                         txtHoTen.getText().trim(),
                         txtSdt.getText().trim(),
                         txtCccd.getText().trim(),
                         phongId,
-                        ngayThue,
-                        "" // Ngày trả có thể xử lý sau nếu cần
+                        ngayThueMoi,
+                        ngayTra // Ngày trả có thể null nếu không có giá trị
                 );
                 if (khachbus.updateKhachThue(updated)) {
                     JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
