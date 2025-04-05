@@ -1,5 +1,4 @@
 package DTO;
-import java.math.BigDecimal;
 
 public class PhongDTO {
     private int id;
