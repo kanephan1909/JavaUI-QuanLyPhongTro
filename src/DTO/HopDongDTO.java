@@ -6,8 +6,6 @@ public class HopDongDTO {
     private int maNguoiThue;
     private int maPhong;
     private String ngayLap;
-
-
     private String ngayBatDau;
     private String ngayKetThuc;
     private double tienDatCoc;
