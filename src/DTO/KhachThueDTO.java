@@ -1,7 +1,5 @@
 package DTO;
 
-import java.time.LocalDate;
-
 public class KhachThueDTO {
     private int id;
     private String hoTen;
@@ -29,7 +27,7 @@ public class KhachThueDTO {
         this.cccd = cccd;
         this.phongID = phongID;
         this.ngayThue = java.time.LocalDate.now().toString(); // Ngày thuê là hôm nay
-        this.ngayTra = "";
+        this.ngayTra = null;
     }
 
 

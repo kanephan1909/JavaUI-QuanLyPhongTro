@@ -14,11 +14,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.toedter.calendar.JDateChooser;
 
-
-
 public class KhachPanel extends JPanel {
     private JTable table;
-    private DefaultTableModel model;
+    private DefaultTableModel tableModel;
     private KhachThueBUS khachbus;
     private PhongBUS phongBUS;
 
@@ -28,82 +26,114 @@ public class KhachPanel extends JPanel {
     public KhachPanel() {
         khachbus = new KhachThueBUS();
         phongBUS = new PhongBUS();
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(10, 10)); // Dùng BorderLayout cho toàn bộ panel
         setBackground(Color.WHITE);
         initComponents();
         loadData();
     }
 
     private void initComponents() {
+        // Tạo panel tìm kiếm
         JPanel topPanel = new JPanel(new BorderLayout(5, 5));
-        JLabel lblSearch = new JLabel("Tìm kiếm khách:");
         txtSearch = new JTextField();
         btnSearch = new JButton("Tìm kiếm");
-
-        setLayout(new BorderLayout(10, 10)); // Sử dụng BorderLayout và thêm khoảng cách giữa các phần tử
-        JPanel topPanelUP = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        // Thêm chiều rộng cho topPanel
-        topPanelUP.setPreferredSize(new Dimension(200, 100));
-        topPanelUP.setBackground(new Color(221, 156, 43));
-
-        JLabel lblHome = new JLabel("<html><div style='text-align: center;margin-top: 18px; color: #fff;'>Trang Chủ</div></html>");
-        lblHome.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        lblHome.setForeground(Color.WHITE); // Màu chữ trắng cho label
-
-        topPanel.add(lblHome, BorderLayout.CENTER);
-        add(topPanelUP, BorderLayout.NORTH);
-
-        topPanel.add(lblSearch, BorderLayout.WEST);
+        topPanel.add(new JLabel("Nhập tên khách:"), BorderLayout.WEST);
         topPanel.add(txtSearch, BorderLayout.CENTER);
         topPanel.add(btnSearch, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
 
-        // Bảng khách thuê
-        String[] columns = {"ID", "Họ tên", "SĐT", "CCCD", "Phòng", "Ngày thuê"};
-        model = new DefaultTableModel(columns, 0) {
+        // Center panel: bảng hiển thị
+        String[] columns = {"ID", "Họ tên", "SĐT", "CCCD", "Phòng", "Ngày thuê", "Ngày Trả"};
+        tableModel = new DefaultTableModel(columns, 0) {
+            @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        table = new JTable(model);
+        table = new JTable(tableModel);
+        table.setFillsViewportHeight(true);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new FlowLayout());
+        // Ẩn cột ID
+        table.getColumnModel().getColumn(0).setMinWidth(0);
+        table.getColumnModel().getColumn(0).setMaxWidth(0);
+        table.getColumnModel().getColumn(0).setWidth(0);
+
+        // Bottom panel: các nút chức năng
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS)); // Sử dụng BoxLayout để căn giữa các nút
+        bottomPanel.setAlignmentX(Component.CENTER_ALIGNMENT);  // Căn giữa panel
+
         btnAdd = new JButton("Thêm");
         btnEdit = new JButton("Sửa");
         btnDelete = new JButton("Xóa");
+
+        // Đặt màu nền cho các nút
+        Color customColor = new Color(20, 25, 95);
+        btnAdd.setBackground(customColor);
+        btnEdit.setBackground(customColor);
+        btnDelete.setBackground(customColor);
+        btnSearch.setBackground(customColor);
+
+        // Đặt màu chữ cho các nút
+        btnAdd.setForeground(Color.WHITE);
+        btnEdit.setForeground(Color.WHITE);
+        btnDelete.setForeground(Color.WHITE);
+        btnSearch.setForeground(Color.WHITE);
+
+        // Đặt kích thước cho các nút
+        Dimension buttonSize = new Dimension(150, 40);  // Thay đổi kích thước của nút
+        btnAdd.setPreferredSize(buttonSize);
+        btnEdit.setPreferredSize(buttonSize);
+        btnDelete.setPreferredSize(buttonSize);
+
+        // Thêm các nút vào bottomPanel
         bottomPanel.add(btnAdd);
+        bottomPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Thêm khoảng cách giữa các nút
         bottomPanel.add(btnEdit);
+        bottomPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         bottomPanel.add(btnDelete);
+
+        // Thêm bottomPanel vào phần Nam của BorderLayout
         add(bottomPanel, BorderLayout.SOUTH);
 
-        btnAdd.addActionListener(e -> showAddForm());
+        // Các action listener
+        btnSearch.addActionListener(e -> timKhachThue());
+        btnAdd.addActionListener(e -> AddKhachThue());
         btnEdit.addActionListener(e -> showEditForm());
         btnDelete.addActionListener(e -> deleteCustomer());
-        btnSearch.addActionListener(e -> searchCustomer());
     }
 
     private void loadData() {
-        model.setRowCount(0);
+        // Xóa dữ liệu cũ trong bảng
+        tableModel.setRowCount(0);
+
+        // Lấy lại dữ liệu từ cơ sở dữ liệu
         List<KhachThueDTO> list = khachbus.getAllKhachThue();
-        for (KhachThueDTO k : list) {
-            model.addRow(new Object[] {
-                    k.getId(), k.getHoTen(), k.getSoDienThoai(),
-                    k.getCccd(), k.getPhongID(), k.getNgayThue()
+        for (KhachThueDTO khach : list) {
+            tableModel.addRow(new Object[]{
+                    khach.getId(),
+                    khach.getHoTen(),
+                    khach.getSoDienThoai(),
+                    khach.getCccd(),
+                    khach.getPhongID(),
+                    khach.getNgayThue(),
+                    khach.getNgayTra()
             });
         }
     }
 
-    private void searchCustomer() {
+
+    private void timKhachThue() {
         String keyword = txtSearch.getText().trim().toLowerCase();
-        model.setRowCount(0);
+        tableModel.setRowCount(0);
         List<KhachThueDTO> list = khachbus.getAllKhachThue();
         for (KhachThueDTO k : list) {
             if (k.getHoTen().toLowerCase().contains(keyword)
                     || k.getSoDienThoai().contains(keyword)
                     || k.getCccd().contains(keyword)) {
-                model.addRow(new Object[] {
+                tableModel.addRow(new Object[] {
                         k.getId(), k.getHoTen(), k.getSoDienThoai(),
                         k.getCccd(), k.getPhongID(), k.getNgayThue()
                 });
@@ -111,7 +141,7 @@ public class KhachPanel extends JPanel {
         }
     }
 
-    private void showAddForm() {
+    private void AddKhachThue() {
         List<PhongDTO> dsPhongTrong = phongBUS.getPhongTrong();
 
         JTextField txtHoTen = new JTextField(20);
@@ -145,7 +175,7 @@ public class KhachPanel extends JPanel {
                 String sdt = txtSdt.getText().trim();
                 String cccd = txtCccd.getText().trim();
                 String selected = (String) cboPhong.getSelectedItem();
-                int phongId = Integer.parseInt(selected.split(" - ")[0]);
+                int phongId = Integer.parseInt(selected.split(" - ")[0].substring(1));
 
                 KhachThueDTO khachMoi = new KhachThueDTO(hoTen, sdt, cccd, phongId);
                 if (khachbus.addKhachThue(khachMoi)) {
@@ -168,12 +198,13 @@ public class KhachPanel extends JPanel {
         }
 
         // Lấy dữ liệu từ hàng được chọn
-        int id = (int) model.getValueAt(selectedRow, 0);
-        String hoTen = (String) model.getValueAt(selectedRow, 1);
-        String sdt = (String) model.getValueAt(selectedRow, 2);
-        String cccd = (String) model.getValueAt(selectedRow, 3);
-        int phongId = (int) model.getValueAt(selectedRow, 4);
-        String ngayThue = (String) model.getValueAt(selectedRow, 5);
+        int id = (int) tableModel.getValueAt(selectedRow, 0);
+        String hoTen = (String) tableModel.getValueAt(selectedRow, 1);
+        String sdt = (String) tableModel.getValueAt(selectedRow, 2);
+        String cccd = (String) tableModel.getValueAt(selectedRow, 3);
+        int phongId = (Integer) tableModel.getValueAt(selectedRow, 4);
+        String ngayThue = (String) tableModel.getValueAt(selectedRow, 5);
+        String ngayTra = (String) tableModel.getValueAt(selectedRow, 6); // Thêm cột ngày trả nếu có
 
         // Các trường nhập liệu
         JTextField txtHoTen = new JTextField(hoTen, 20);
@@ -183,18 +214,26 @@ public class KhachPanel extends JPanel {
         txtPhong.setEnabled(false);
 
         // Tạo JDateChooser cho ngày thuê
-        JDateChooser dateChooser = new JDateChooser();
+        JDateChooser dateChooserNgayThue = new JDateChooser();
+        JDateChooser dateChooserNgayTra = new JDateChooser();
+
         try {
             // Nếu ngày thuê có sẵn, set giá trị cho JDateChooser
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = sdf.parse(ngayThue); // Chuyển đổi từ String thành Date
-            dateChooser.setDate(date);
+            Date dateNgayThue = sdf.parse(ngayThue); // Chuyển đổi từ String thành Date
+            dateChooserNgayThue.setDate(dateNgayThue);
+
+            // Nếu có ngày trả, set giá trị cho JDateChooser ngày trả
+            if (ngayTra != null && !ngayTra.isEmpty()) {
+                Date dateNgayTra = sdf.parse(ngayTra);
+                dateChooserNgayTra.setDate(dateNgayTra);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         // Tạo panel với GridLayout
-        JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+        JPanel panel = new JPanel(new GridLayout(9, 2, 5, 5));
         panel.add(new JLabel("Họ tên:"));
         panel.add(txtHoTen);
         panel.add(new JLabel("Số điện thoại:"));
@@ -204,25 +243,28 @@ public class KhachPanel extends JPanel {
         panel.add(new JLabel("Phòng:"));
         panel.add(txtPhong);
         panel.add(new JLabel("Ngày Thuê:"));
-        panel.add(dateChooser);
+        panel.add(dateChooserNgayThue);
+        panel.add(new JLabel("Ngày Trả:"));
+        panel.add(dateChooserNgayTra);
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Chỉnh sửa khách hàng", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             try {
                 // Lấy ngày thuê từ JDateChooser
-                Date selectedDate = dateChooser.getDate();
-                if (selectedDate == null) {
+                Date selectedNgayThue = dateChooserNgayThue.getDate();
+                if (selectedNgayThue == null) {
                     JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày thuê!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return; // Nếu ngày thuê không được chọn, thoát ra
+                    return;
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String ngayThueMoi = sdf.format(selectedDate); // Chuyển lại thành String
+                String ngayThueMoi = sdf.format(selectedNgayThue); // Chuyển lại thành String
 
-                // Kiểm tra và xử lý ngày trả (ngày trả có thể là null)
-                String ngayTra = ""; // Nếu không có ngày trả, set giá trị rỗng hoặc null
-                if (ngayTra.isEmpty()) {
-                    ngayTra = null; // Nếu ngày trả không có, để nó là null
+                // Kiểm tra và xử lý ngày trả
+                Date selectedNgayTra = dateChooserNgayTra.getDate();
+                String ngayTraMoi = null;
+                if (selectedNgayTra != null) {
+                    ngayTraMoi = sdf.format(selectedNgayTra); // Chuyển ngày trả thành String nếu có
                 }
 
                 // Cập nhật thông tin khách hàng
@@ -233,7 +275,7 @@ public class KhachPanel extends JPanel {
                         txtCccd.getText().trim(),
                         phongId,
                         ngayThueMoi,
-                        ngayTra // Ngày trả có thể null nếu không có giá trị
+                        ngayTraMoi // Ngày trả có thể null nếu không có giá trị
                 );
                 if (khachbus.updateKhachThue(updated)) {
                     JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
@@ -247,16 +289,17 @@ public class KhachPanel extends JPanel {
         }
     }
 
+
     private void deleteCustomer() {
         int selectedRow = table.getSelectedRow();
-        if(selectedRow == -1) {
+        if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng để xóa!");
             return;
         }
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-        if(confirm == JOptionPane.YES_OPTION) {
-            int id = (int) model.getValueAt(selectedRow, 0);
-            if(khachbus.deleteKhachThue(id)) {
+        if (confirm == JOptionPane.YES_OPTION) {
+            int id = (int) tableModel.getValueAt(selectedRow, 0);
+            if (khachbus.deleteKhachThue(id)) {
                 JOptionPane.showMessageDialog(this, "Xóa thành công!");
                 loadData();
             } else {
