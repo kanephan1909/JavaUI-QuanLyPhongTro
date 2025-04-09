@@ -107,7 +107,7 @@ public class MainFrame extends JFrame {
         addSidebarButton(menuPanel, "Quản lý Khách Thuê", new GUI.KhachPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Hợp Đồng", new GUI.HopDongPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Hóa đơn", new GUI.HoaDonPanel(), gbc);
-        addSidebarButton(menuPanel, "Logout", null, gbc); // Thêm mục "Logout"
+        addSidebarButton(menuPanel, "Thoát", null, gbc); // Thêm mục "Logout"
 
         // Thêm panel rỗng để đẩy các nút lên đầu
         gbc.weighty = 1;

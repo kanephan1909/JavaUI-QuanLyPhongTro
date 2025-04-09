@@ -36,7 +36,7 @@ public class PhongPanel extends JPanel {
         txtSearch = new JTextField(20);
         btnSearch = new JButton("Tìm kiếm");
 
-        topPanel.add(new JLabel("Nhập tên khách:"));
+        topPanel.add(new JLabel("Nhập tên phòng:"));
         topPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Thêm khoảng cách giữa label và trường nhập liệu
         topPanel.add(txtSearch);
         topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
