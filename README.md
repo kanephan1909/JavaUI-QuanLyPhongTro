@@ -17,9 +17,13 @@
 
 
 <div align="center">
-![Screenshot 2025-04-09 212952](https://github.com/user-attachments/assets/720136f9-d149-48c4-aa02-176a6c771bec)
+
+![Screenshot 2025-04-09 212952](https://github.com/user-attachments/assets/06a00992-e17e-420e-9173-3998020497cb)
+
 </div>
 
 <div align="center">
-![Screenshot 2025-04-09 213000](https://github.com/user-attachments/assets/45d6010b-4374-48b4-9834-2f4d6dd29391)
+
+![Screenshot 2025-04-09 213000](https://github.com/user-attachments/assets/d68dd92d-cd35-4ff2-9cf7-eed0c401fc63)
+
 </div>
