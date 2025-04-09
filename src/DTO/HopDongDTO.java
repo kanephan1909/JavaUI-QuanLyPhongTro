@@ -4,7 +4,7 @@ import java.util.Date;
 public class HopDongDTO {
     private int id;
     private int maNguoiThue;
-    private int maPhong;
+    private String maPhong;
     private String ngayLap;
     private String ngayBatDau;
     private String ngayKetThuc;
@@ -13,7 +13,7 @@ public class HopDongDTO {
     // Constructor
 
 
-    public HopDongDTO(int id, int maNguoiThue, int maPhong, String ngayLap, String ngayBatDau, String ngayKetThuc, double tienDatCoc) {
+    public HopDongDTO(int id, int maNguoiThue, String maPhong, String ngayLap, String ngayBatDau, String ngayKetThuc, double tienDatCoc) {
         this.id = id;
         this.maNguoiThue = maNguoiThue;
         this.maPhong = maPhong;
@@ -41,11 +41,11 @@ public class HopDongDTO {
         this.maNguoiThue = maNguoiThue;
     }
 
-    public int getMaPhong() {
+    public String getMaPhong() {
         return maPhong;
     }
 
-    public void setMaPhong(int maPhong) {
+    public void setMaPhong(String maPhong) {
         this.maPhong = maPhong;
     }
 

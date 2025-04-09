@@ -42,4 +42,13 @@ public class HoaDonBUS {
         return hoaDonDAL.deleteHoaDon(id);
     }
 
+    public boolean checkMaHopDongExist(int maHopDong) {
+        return hoaDonDAL.checkHopDongExist(maHopDong);
+    }
+
+    public int getMaHopDongFromMaPhong(String maPhong) {
+        return hoaDonDAL.getMaHopDongFromMaPhong(maPhong);
+    }
+
+
 }

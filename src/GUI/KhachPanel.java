@@ -62,7 +62,7 @@ public class KhachPanel extends JPanel {
 
 
         // Center panel: bảng hiển thị
-        String[] columns = {"ID", "Họ tên", "SĐT", "CCCD", "Phòng", "Ngày thuê", "Ngày Trả"};
+        String[] columns = {"ID", "Họ tên", "SĐT", "CCCD", "Mã Phòng", "Ngày thuê", "Ngày Trả"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -131,12 +131,16 @@ public class KhachPanel extends JPanel {
         // Lấy lại dữ liệu từ cơ sở dữ liệu
         List<KhachThueDTO> list = khachbus.getAllKhachThue();
         for (KhachThueDTO khach : list) {
+            // Lấy MaPhong từ PhongID
+            String maPhong = khach.getPhongID();
+
+            // Thêm dữ liệu vào bảng
             tableModel.addRow(new Object[]{
                     khach.getId(),
                     khach.getHoTen(),
                     khach.getSoDienThoai(),
                     khach.getCccd(),
-                    khach.getPhongID(),
+                    maPhong, // Thay PhongID bằng MaPhong
                     khach.getNgayThue(),
                     khach.getNgayTra()
             });
@@ -173,6 +177,10 @@ public class KhachPanel extends JPanel {
             modelPhong.addElement(p.getMaPhong() + " - " + p.getTenPhong());
         }
         JComboBox<String> cboPhong = new JComboBox<>(modelPhong);
+        if (dsPhongTrong.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có phòng trống!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
         panel.add(new JLabel("Họ tên:"));
@@ -195,7 +203,7 @@ public class KhachPanel extends JPanel {
                 String sdt = txtSdt.getText().trim();
                 String cccd = txtCccd.getText().trim();
                 String selected = (String) cboPhong.getSelectedItem();
-                int phongId = Integer.parseInt(selected.split(" - ")[0].substring(1));
+                String phongId = selected.split(" - ")[0];
 
                 KhachThueDTO khachMoi = new KhachThueDTO(hoTen, sdt, cccd, phongId);
                 if (khachbus.addKhachThue(khachMoi)) {
@@ -211,6 +219,8 @@ public class KhachPanel extends JPanel {
     }
 
     private void showEditForm() {
+        List<PhongDTO> dsPhongTrong = phongBUS.getPhongTrong();
+
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng để sửa!");
@@ -222,15 +232,28 @@ public class KhachPanel extends JPanel {
         String hoTen = (String) tableModel.getValueAt(selectedRow, 1);
         String sdt = (String) tableModel.getValueAt(selectedRow, 2);
         String cccd = (String) tableModel.getValueAt(selectedRow, 3);
-        int phongId = (Integer) tableModel.getValueAt(selectedRow, 4);
+        String phongId = (String) tableModel.getValueAt(selectedRow, 4);  // Lấy phòng hiện tại
         String ngayThue = (String) tableModel.getValueAt(selectedRow, 5);
-        String ngayTra = (String) tableModel.getValueAt(selectedRow, 6); // Thêm cột ngày trả nếu có
+        String ngayTra = (String) tableModel.getValueAt(selectedRow, 6);
 
         // Các trường nhập liệu
         JTextField txtHoTen = new JTextField(hoTen, 20);
         JTextField txtSdt = new JTextField(sdt, 20);
         JTextField txtCccd = new JTextField(cccd, 20);
-        JTextField txtPhong = new JTextField(String.valueOf(phongId));
+
+        DefaultComboBoxModel<String> modelPhong = new DefaultComboBoxModel<>();
+        for (PhongDTO p : dsPhongTrong) {
+            modelPhong.addElement(p.getMaPhong() + " - " + p.getTenPhong());
+        }
+        JComboBox<String> cboPhong = new JComboBox<>(modelPhong);
+
+        // Chọn phòng trong JComboBox dựa trên `phongId`
+        for (int i = 0; i < dsPhongTrong.size(); i++) {
+            if (dsPhongTrong.get(i).getMaPhong().equals(phongId)) {
+                cboPhong.setSelectedIndex(i); // Chọn phòng đúng từ danh sách
+                break;
+            }
+        }
 
         // Tạo JDateChooser cho ngày thuê
         JDateChooser dateChooserNgayThue = new JDateChooser();
@@ -239,7 +262,7 @@ public class KhachPanel extends JPanel {
         try {
             // Nếu ngày thuê có sẵn, set giá trị cho JDateChooser
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date dateNgayThue = sdf.parse(ngayThue); // Chuyển đổi từ String thành Date
+            Date dateNgayThue = sdf.parse(ngayThue);
             dateChooserNgayThue.setDate(dateNgayThue);
 
             // Nếu có ngày trả, set giá trị cho JDateChooser ngày trả
@@ -260,7 +283,7 @@ public class KhachPanel extends JPanel {
         panel.add(new JLabel("CCCD:"));
         panel.add(txtCccd);
         panel.add(new JLabel("Phòng:"));
-        panel.add(txtPhong);
+        panel.add(cboPhong);
         panel.add(new JLabel("Ngày Thuê:"));
         panel.add(dateChooserNgayThue);
         panel.add(new JLabel("Ngày Trả:"));
@@ -277,14 +300,17 @@ public class KhachPanel extends JPanel {
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String ngayThueMoi = sdf.format(selectedNgayThue); // Chuyển lại thành String
+                String ngayThueMoi = sdf.format(selectedNgayThue);
 
                 // Kiểm tra và xử lý ngày trả
                 Date selectedNgayTra = dateChooserNgayTra.getDate();
                 String ngayTraMoi = null;
                 if (selectedNgayTra != null) {
-                    ngayTraMoi = sdf.format(selectedNgayTra); // Chuyển ngày trả thành String nếu có
+                    ngayTraMoi = sdf.format(selectedNgayTra); // Ngày trả có thể là null
                 }
+
+                // Lấy phòng mới từ JComboBox
+                String phongIdMoi = ((String) cboPhong.getSelectedItem()).split(" - ")[0]; // Lấy MaPhong mới
 
                 // Cập nhật thông tin khách hàng
                 KhachThueDTO updated = new KhachThueDTO(
@@ -292,13 +318,21 @@ public class KhachPanel extends JPanel {
                         txtHoTen.getText().trim(),
                         txtSdt.getText().trim(),
                         txtCccd.getText().trim(),
-                        phongId,
+                        phongIdMoi, // Cập nhật PhongID
                         ngayThueMoi,
-                        ngayTraMoi // Ngày trả có thể null nếu không có giá trị
+                        ngayTraMoi
                 );
+
                 if (khachbus.updateKhachThue(updated)) {
+                    // Cập nhật dữ liệu trong bảng mà không cần load lại từ cơ sở dữ liệu
+                    tableModel.setValueAt(txtHoTen.getText().trim(), selectedRow, 1);
+                    tableModel.setValueAt(txtSdt.getText().trim(), selectedRow, 2);
+                    tableModel.setValueAt(txtCccd.getText().trim(), selectedRow, 3);
+                    tableModel.setValueAt(phongIdMoi, selectedRow, 4); // Cập nhật PhongID
+                    tableModel.setValueAt(ngayThueMoi, selectedRow, 5);
+                    tableModel.setValueAt(ngayTraMoi, selectedRow, 6);
+
                     JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-                    loadData();
                 } else {
                     JOptionPane.showMessageDialog(this, "Cập nhật thất bại!");
                 }
@@ -307,7 +341,6 @@ public class KhachPanel extends JPanel {
             }
         }
     }
-
 
     private void deleteCustomer() {
         int selectedRow = table.getSelectedRow();

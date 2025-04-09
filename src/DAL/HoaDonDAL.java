@@ -123,7 +123,7 @@ public class HoaDonDAL {
     }
 
     // Kiểm tra mã hợp đồng có tồn tại chưa
-    private boolean checkHopDongExist(int maHopDong) {
+    public boolean checkHopDongExist(int maHopDong) {
         String query = "SELECT COUNT(*) FROM hopdong WHERE ID = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
@@ -138,5 +138,26 @@ public class HoaDonDAL {
         }
         return false;
     }
+
+    public static int getMaHopDongFromMaPhong(String maPhong) {
+        int maHopDong = -1;
+        String query = "SELECT ID FROM HopDong WHERE MaPhong = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, maPhong); // Dùng MaPhong để tìm MaHopDong
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                maHopDong = rs.getInt("ID"); // Lấy MaHopDong từ bảng HopDong
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return maHopDong;
+    }
+
 
 }

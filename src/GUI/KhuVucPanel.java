@@ -30,7 +30,7 @@ public class KhuVucPanel extends JPanel {
         inputPanel.add(new JLabel("Mã Khu Vực:"));
         txtMaKhuVuc = new JTextField();
         inputPanel.add(txtMaKhuVuc);
-        txtMaKhuVuc.setEnabled(false);
+        txtMaKhuVuc.setEditable(false);
 
         inputPanel.add(new JLabel("Tên Khu Vực:"));
         txtTenKhuVuc = new JTextField();
@@ -45,7 +45,7 @@ public class KhuVucPanel extends JPanel {
         // Panel cho các nút chức năng
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JButton btnThem = new JButton("Thêm Khu Vực");
-        JButton btnSua = new JButton("Cập Nhật");
+        JButton btnSua = new JButton("Sửa");
         JButton btnXoa = new JButton("Xóa");
 
         buttonPanel.add(btnThem);
@@ -101,7 +101,7 @@ public class KhuVucPanel extends JPanel {
                     return;
                 }
 
-                KhuVucDTO khuVuc = new KhuVucDTO(0, tenKhuVuc, diaChi);
+                KhuVucDTO khuVuc = new KhuVucDTO("KV001", tenKhuVuc, diaChi);
                 boolean result = KhuVucDAL.addKhuVuc(khuVuc);
 
                 if (result) {
@@ -126,7 +126,7 @@ public class KhuVucPanel extends JPanel {
                 }
 
                 // Lấy thông tin khu vực từ bảng
-                int id = (int) model.getValueAt(selectedRow, 0);
+                String id = (String) model.getValueAt(selectedRow, 0);
                 String tenKhuVucOld = (String) model.getValueAt(selectedRow, 1);  // Tên khu vực cũ
                 String diaChiOld = (String) model.getValueAt(selectedRow, 2);  // Địa chỉ khu vực cũ
 
@@ -179,7 +179,7 @@ public class KhuVucPanel extends JPanel {
                     return;
                 }
 
-                int id = (int) model.getValueAt(selectedRow, 0);
+                String id = (String) model.getValueAt(selectedRow, 0);
                 int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa khu vực này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
 
                 if (confirm == JOptionPane.YES_OPTION) {

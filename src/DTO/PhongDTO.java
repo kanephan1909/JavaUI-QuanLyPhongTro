@@ -1,7 +1,6 @@
 package DTO;
 
 public class PhongDTO {
-    private int id;
     private String maPhong;
     private String tenPhong;
     private String loaiPhong;
@@ -9,11 +8,10 @@ public class PhongDTO {
     private float giaPhong;
     private String moTa;
     private String tinhTrang;
-    private int khuVucID;
+    private String khuVucID;
 
     // Constructor
-    public PhongDTO(int id, String maPhong, String tenPhong, String loaiPhong, int dienTich, float giaPhong, String moTa, String tinhTrang, int khuVucID) {
-        this.id = id;
+    public PhongDTO(String maPhong, String tenPhong, String loaiPhong, int dienTich, float giaPhong, String moTa, String tinhTrang, String khuVucID) {
         this.maPhong = maPhong;
         this.tenPhong = tenPhong;
         this.loaiPhong = loaiPhong;
@@ -25,14 +23,6 @@ public class PhongDTO {
     }
 
     // Getters and Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getMaPhong() {
         return maPhong;
     }
@@ -89,11 +79,11 @@ public class PhongDTO {
         this.tinhTrang = tinhTrang;
     }
 
-    public int getKhuVucID() {
+    public String getKhuVucID() {
         return khuVucID;
     }
 
-    public void setKhuVucID(int khuVucID) {
+    public void setKhuVucID(String khuVucID) {
         this.khuVucID = khuVucID;
     }
 }

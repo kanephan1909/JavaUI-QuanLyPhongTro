@@ -2,6 +2,7 @@ package GUI;
 
 import BUS.HoaDonBUS;
 import BUS.KhachThueBUS;
+import DAL.HoaDonDAL;
 import DTO.HoaDonDTO;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class HoaDonPanel extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private ArrayList<HoaDonDTO> danhSachHoaDon;
-    private JButton btnThem, btnSua, btnXoa;
+    private JButton btnThem, btnSua, btnXoa, btnCapNhat;
     private JComboBox<String> cboTrangThai;
     private JTextField txtMaPhong, txtTienDien, txtTienNuoc, txtTienPhong, txtMaHopDong;
     private JDateChooser dateThangNam;
@@ -93,22 +94,26 @@ public class HoaDonPanel extends JPanel {
         btnThem = new JButton("Thêm");
         btnSua = new JButton("Sửa");
         btnXoa = new JButton("Xóa");
+        btnCapNhat = new JButton("Cap Nhat");
 
         Color customColor = new Color(20, 25, 95);
         btnThem.setBackground(customColor);
         btnSua.setBackground(customColor);
         btnXoa.setBackground(customColor);
+        btnCapNhat.setBackground(customColor);
 
         // Đặt màu chữ cho các nút
         btnThem.setForeground(Color.WHITE);
         btnSua.setForeground(Color.WHITE);
         btnXoa.setForeground(Color.WHITE);
+        btnCapNhat.setForeground(Color.WHITE);
 
         // Đặt kích thước cho các nút
-        Dimension buttonSize = new Dimension(80, 30);  // Thay đổi kích thước của nút
+        Dimension buttonSize = new Dimension(100, 30);  // Thay đổi kích thước của nút
         btnThem.setPreferredSize(buttonSize);
         btnSua.setPreferredSize(buttonSize);
         btnXoa.setPreferredSize(buttonSize);
+        btnCapNhat.setPreferredSize(buttonSize);
 
         // Thêm các nút vào bottomPanel
         buttonPanel.add(btnThem);
@@ -116,16 +121,20 @@ public class HoaDonPanel extends JPanel {
         buttonPanel.add(btnSua);
         buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         buttonPanel.add(btnXoa);
+        buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        buttonPanel.add(btnCapNhat);
 
         buttonPanel.add(btnThem);
         buttonPanel.add(btnSua);
         buttonPanel.add(btnXoa);
+        buttonPanel.add(btnCapNhat);
 
         add(buttonPanel, BorderLayout.SOUTH);
 
         btnThem.addActionListener(e -> themHoaDon());
         btnSua.addActionListener(e -> suaHoaDon());
         btnXoa.addActionListener(e -> xoaHoaDon());
+        btnCapNhat.addActionListener(e -> loadData());
     }
 
     private void loadData() {
@@ -163,7 +172,7 @@ public class HoaDonPanel extends JPanel {
             }
 
             // Chuyển đổi các giá trị nhập vào
-            int maPhong = Integer.parseInt(maPhongText);
+            String maPhong = maPhongText;
             float tienDien = Float.parseFloat(tienDienText);
             float tienNuoc = Float.parseFloat(tienNuocText);
             float tienPhong = Float.parseFloat(tienPhongText);
@@ -171,6 +180,13 @@ public class HoaDonPanel extends JPanel {
             // Kiểm tra các giá trị số hợp lệ
             if (tienDien < 0 || tienNuoc < 0 || tienPhong < 0) {
                 JOptionPane.showMessageDialog(this, "Tiền điện, tiền nước và tiền phòng phải là số dương!");
+                return;
+            }
+
+            // Lấy mã hợp đồng từ mã phòng
+            int maHopDong = HoaDonDAL.getMaHopDongFromMaPhong(maPhong);
+            if (maHopDong == -1) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy mã hợp đồng cho mã phòng này!");
                 return;
             }
 
@@ -189,8 +205,7 @@ public class HoaDonPanel extends JPanel {
                 return;
             }
 
-            int maHopDong = maPhong;
-
+            // Tạo đối tượng hóa đơn
             HoaDonDTO hoaDon = new HoaDonDTO(0, maHopDong, thangNam, tienPhong, tienDien, tienNuoc, tongTien, cboTrangThai.getSelectedItem().toString());
 
             // Thêm hóa đơn vào cơ sở dữ liệu
@@ -208,6 +223,7 @@ public class HoaDonPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
 
     private void clearForm() {

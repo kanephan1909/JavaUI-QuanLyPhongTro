@@ -151,14 +151,12 @@ public class MainFrame extends JFrame {
         buttonPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (text.equals("Logout")) {
+                if (text.equals("Thoát")) {
                     System.exit(0);  // Đóng ứng dụng
                 } else if (panel != null) {
                     switchPanel(panel); // Chuyển panel khi click
                 }
             }
-
-
 
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -198,8 +196,8 @@ public class MainFrame extends JFrame {
         activePanel = buttonPanel;
     }
 
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
-//    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
+    }
 
 }

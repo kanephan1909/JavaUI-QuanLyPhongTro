@@ -41,8 +41,8 @@ public class PhongBUS {
     }
 
     // Xóa phòng theo ID
-    public boolean deletePhong(int id) {
-        return phongDAL.deletePhong(id);
+    public boolean deletePhong(String maPhong) {
+        return phongDAL.deletePhong(maPhong);
     }
 
     public List<PhongDTO> getPhongTrong() {

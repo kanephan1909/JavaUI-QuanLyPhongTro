@@ -19,7 +19,7 @@ public class KhuVucDAL {
 
             while (rs.next()) {
                 KhuVucDTO khuVuc = new KhuVucDTO(
-                        rs.getInt("ID"),
+                        rs.getString("ID"),
                         rs.getString("TenKhuVuc"),
                         rs.getString("DiaChi")
                 );
@@ -30,28 +30,42 @@ public class KhuVucDAL {
         }
         return dsKhuVuc;
     }
+    public static String generateKhuVucID() {
+        List<KhuVucDTO> khuVucList = getAllKhuVuc();  // Lấy danh sách khu vực hiện có
+        int newIdNumber = khuVucList.size() + 1;  // Tính số lượng khu vực và tăng lên 1
+        return "KV" + String.format("%03d", newIdNumber);  // Tạo ID với định dạng "KV001", "KV002", ...
+    }
+
 
     // Thêm khu vực mới
     public static boolean addKhuVuc(KhuVucDTO khuVuc) {
-        if (khuVuc == null || khuVuc.getTenKhuVuc() == null || khuVuc.getDiaChi() == null) return false;
+        if (khuVuc == null || khuVuc.getTenKhuVuc() == null || khuVuc.getDiaChi() == null) {
+            return false;  // Kiểm tra thông tin không hợp lệ
+        }
 
-        String sql = "INSERT INTO KhuVuc (TenKhuVuc, DiaChi) VALUES (?, ?)";
+        // Tạo ID tự động cho khu vực mới
+        String newKhuVucID = generateKhuVucID();
+        khuVuc.setId(newKhuVucID);  // Gán ID mới cho đối tượng khu vực
+
+        String sql = "INSERT INTO KhuVuc (ID, TenKhuVuc, DiaChi) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, khuVuc.getTenKhuVuc());
-            ps.setString(2, khuVuc.getDiaChi());
+            // Thiết lập các tham số cho câu lệnh SQL
+            ps.setString(1, khuVuc.getId());  // Gán ID tự động cho khu vực
+            ps.setString(2, khuVuc.getTenKhuVuc());
+            ps.setString(3, khuVuc.getDiaChi());
 
-            return ps.executeUpdate() > 0;
+            return ps.executeUpdate() > 0;  // Thêm thành công, trả về true
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();  // In ra lỗi nếu có
         }
-        return false;
+        return false;  // Trả về false nếu có lỗi
     }
 
     // Cập nhật thông tin khu vực (dựa trên ID)
     public static boolean updateKhuVuc(KhuVucDTO khuVuc) {
-        if (khuVuc == null || khuVuc.getId() <= 0) return false;
+        if (khuVuc == null || khuVuc.getId().isEmpty()) return false;
 
         String sql = "UPDATE KhuVuc SET TenKhuVuc=?, DiaChi=? WHERE ID=?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -59,7 +73,7 @@ public class KhuVucDAL {
 
             ps.setString(1, khuVuc.getTenKhuVuc());
             ps.setString(2, khuVuc.getDiaChi());
-            ps.setInt(3, khuVuc.getId());
+            ps.setString(3, khuVuc.getId());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -81,7 +95,7 @@ public class KhuVucDAL {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new KhuVucDTO(
-                            rs.getInt("ID"),
+                            rs.getString("ID"),
                             rs.getString("TenKhuVuc"),
                             rs.getString("DiaChi")
                     );
@@ -94,14 +108,14 @@ public class KhuVucDAL {
     }
 
     // Xóa khu vực theo ID
-    public static boolean deleteKhuVuc(int id) {
-        if (id <= 0) return false;
+    public static boolean deleteKhuVuc(String id) {
+        if (id.isEmpty()) return false;
 
         String sql = "DELETE FROM KhuVuc WHERE ID=?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, id);
+            ps.setString(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

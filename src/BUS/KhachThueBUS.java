@@ -30,4 +30,6 @@ public class KhachThueBUS {
     public boolean deleteKhachThue(int id) {
         return khachThueDAL.deleteKhachThue(id);
     }
+
+
 }

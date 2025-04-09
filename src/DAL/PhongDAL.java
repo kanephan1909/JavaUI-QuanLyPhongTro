@@ -20,7 +20,6 @@ public class PhongDAL {
 
             while (rs.next()) {
                 PhongDTO phong = new PhongDTO(
-                        rs.getInt("ID"),
                         rs.getString("MaPhong"),
                         rs.getString("TenPhong"),
                         rs.getString("LoaiPhong"),
@@ -28,7 +27,7 @@ public class PhongDAL {
                         rs.getFloat("GiaPhong"),
                         rs.getString("MoTa"),
                         rs.getString("TinhTrang"),
-                        rs.getInt("KhuVucID")
+                        rs.getString("KhuVucID")
                 );
                 dsPhong.add(phong);
             }
@@ -54,7 +53,7 @@ public class PhongDAL {
             ps.setFloat(5, phong.getGiaPhong());
             ps.setString(6, phong.getMoTa());
             ps.setString(7, phong.getTinhTrang());
-            ps.setInt(8, phong.getKhuVucID());
+            ps.setString(8, phong.getKhuVucID());
 
             return ps.executeUpdate() > 0;
         } catch (SQLIntegrityConstraintViolationException e) {
@@ -69,21 +68,19 @@ public class PhongDAL {
 
     // Cập nhật thông tin phòng (dựa trên ID)
     public static boolean updatePhong(PhongDTO phong) {
-        if (phong == null || phong.getId() <= 0) return false;
-
-        String sql = "UPDATE Phong SET MaPhong=?, TenPhong=?, LoaiPhong=?, DienTich=?, GiaPhong=?, MoTa=?, TinhTrang=?, KhuVucID=? WHERE ID=?";
+        String sql = "UPDATE Phong SET TenPhong=?, LoaiPhong=?, DienTich=?, GiaPhong=?, MoTa=?, TinhTrang=?, KhuVucID=? WHERE MaPhong=?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, phong.getMaPhong());
-            ps.setString(2, phong.getTenPhong());
-            ps.setString(3, phong.getLoaiPhong());
-            ps.setInt(4, phong.getDienTich());
-            ps.setFloat(5, phong.getGiaPhong());
-            ps.setString(6, phong.getMoTa());
-            ps.setString(7, phong.getTinhTrang());
-            ps.setInt(8, phong.getKhuVucID());
-            ps.setInt(9, phong.getId());
+            ps.setString(1, phong.getTenPhong());
+            ps.setString(2, phong.getLoaiPhong());
+            ps.setInt(3, phong.getDienTich());
+            ps.setFloat(4, phong.getGiaPhong());
+            ps.setString(5, phong.getMoTa());
+            ps.setString(6, phong.getTinhTrang());
+            ps.setString(7, phong.getKhuVucID());
+            ps.setString(8, phong.getMaPhong());
+
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -91,6 +88,7 @@ public class PhongDAL {
         }
         return false;
     }
+
 
     // Tìm phòng theo mã phòng
     public static PhongDTO searchPhong(String maPhong) {
@@ -105,7 +103,6 @@ public class PhongDAL {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new PhongDTO(
-                            rs.getInt("ID"),
                             rs.getString("MaPhong"),
                             rs.getString("TenPhong"),
                             rs.getString("LoaiPhong"),
@@ -113,7 +110,7 @@ public class PhongDAL {
                             rs.getFloat("GiaPhong"),
                             rs.getString("MoTa"),
                             rs.getString("TinhTrang"),
-                            rs.getInt("KhuVucID")
+                            rs.getString("KhuVucID")
                     );
                 }
             }
@@ -124,23 +121,24 @@ public class PhongDAL {
     }
 
     // Xóa phòng theo ID
-    public static boolean deletePhong(int id) {
-        if (id <= 0) return false;
+    public static boolean deletePhong(String maPhong) {
+        if (maPhong == null || maPhong.isEmpty()) return false;  // Kiểm tra nếu id không hợp lệ
 
-        String sql = "DELETE FROM Phong WHERE ID=?";
+        String sql = "DELETE FROM Phong WHERE MaPhong=?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+            ps.setString(1, maPhong);  // Sử dụng setString để truyền id kiểu String
+            return ps.executeUpdate() > 0;  // Trả về true nếu xóa thành công
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
+
     public boolean capNhatTinhTrangPhong(int phongID, String tinhTrang) {
-        String sql = "UPDATE Phong SET TinhTrang = ? WHERE ID = ?";
+        String sql = "UPDATE Phong SET TinhTrang = ? WHERE MaPhong = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, tinhTrang);

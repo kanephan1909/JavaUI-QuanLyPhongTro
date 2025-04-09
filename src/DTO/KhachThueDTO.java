@@ -5,12 +5,12 @@ public class KhachThueDTO {
     private String hoTen;
     private String soDienThoai;
     private String cccd;
-    private int phongID;
+    private String phongID;
     private String ngayThue;
     private String ngayTra;
 
     // Constructor
-    public KhachThueDTO(int id, String hoTen, String soDienThoai, String cccd, int phongID, String ngayThue, String ngayTra) {
+    public KhachThueDTO(int id, String hoTen, String soDienThoai, String cccd, String phongID, String ngayThue, String ngayTra) {
         this.id = id;
         this.hoTen = hoTen;
         this.soDienThoai = soDienThoai;
@@ -21,7 +21,7 @@ public class KhachThueDTO {
     }
 
     // Constructor dùng khi thêm khách mới
-    public KhachThueDTO(String hoTen, String soDienThoai, String cccd, int phongID) {
+    public KhachThueDTO(String hoTen, String soDienThoai, String cccd, String phongID) {
         this.hoTen = hoTen;
         this.soDienThoai = soDienThoai;
         this.cccd = cccd;
@@ -29,7 +29,6 @@ public class KhachThueDTO {
         this.ngayThue = java.time.LocalDate.now().toString(); // Ngày thuê là hôm nay
         this.ngayTra = null;
     }
-
 
     // Getters and Setters
     public int getId() {
@@ -64,11 +63,12 @@ public class KhachThueDTO {
         this.cccd = cccd;
     }
 
-    public int getPhongID() {
+    public String getPhongID() {
         return phongID;
     }
 
-    public void setPhongID(int phongID) {
+
+    public void setPhongID(String phongID) {
         this.phongID = phongID;
     }
 
@@ -88,4 +88,3 @@ public class KhachThueDTO {
         this.ngayTra = ngayTra;
     }
 }
-

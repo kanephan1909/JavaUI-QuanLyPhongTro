@@ -15,7 +15,7 @@ public class PhongPanel extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField txtSearch;
-    private JButton btnSearch, btnThem, btnSua, btnXoa;
+    private JButton btnSearch, btnThem, btnSua, btnXoa, btnCapNhat;
     private List<PhongDTO> danhSachPhong;
     private PhongBUS phongBUS;
     private List<KhuVucDTO> khuVucList;  // Danh sách khu vực
@@ -45,7 +45,7 @@ public class PhongPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         // Center panel: bảng hiển thị
-        String[] columns = { "ID", "Mã Phòng", "Tên phòng", "Loại Phòng", "Giá thuê", "Trạng thái", "Khu Vực" };
+        String[] columns = {"Mã Phòng", "Tên phòng", "Loại Phòng", "Giá thuê", "Trạng thái", "Khu Vực" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -57,12 +57,18 @@ public class PhongPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
+        // Ẩn cột ID
+//        table.getColumnModel().getColumn(0).setMinWidth(0);
+//        table.getColumnModel().getColumn(0).setMaxWidth(0);
+//        table.getColumnModel().getColumn(0).setWidth(0);
+
         // Bottom panel: các nút chức năng
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); // Dùng BoxLayout cho các nút
         btnThem = new JButton("Thêm");
         btnSua = new JButton("Sửa");
         btnXoa = new JButton("Xóa");
+        btnCapNhat = new JButton("Cập Nhật");
 
         // Cải thiện màu sắc cho các nút
         Color customColor = new Color(20, 25, 95);
@@ -70,12 +76,14 @@ public class PhongPanel extends JPanel {
         btnSua.setBackground(customColor);
         btnXoa.setBackground(customColor);
         btnSearch.setBackground(customColor);
+        btnCapNhat.setBackground(customColor);
 
         // Đặt màu chữ cho các nút
         btnThem.setForeground(Color.WHITE);
         btnSua.setForeground(Color.WHITE);
         btnXoa.setForeground(Color.WHITE);
         btnSearch.setForeground(Color.WHITE);
+        btnCapNhat.setForeground(Color.WHITE);
 
         // Đặt kích thước cho các nút
         Dimension buttonSize = new Dimension(100, 30);  // Thay đổi kích thước của nút
@@ -83,6 +91,7 @@ public class PhongPanel extends JPanel {
         btnSua.setPreferredSize(buttonSize);
         btnXoa.setPreferredSize(buttonSize);
         btnSearch.setPreferredSize(buttonSize);
+        btnCapNhat.setPreferredSize(buttonSize);
 
         // Thêm các nút vào bottomPanel
         bottomPanel.add(btnThem);
@@ -90,6 +99,8 @@ public class PhongPanel extends JPanel {
         bottomPanel.add(btnSua);
         bottomPanel.add(Box.createRigidArea(new Dimension(0, 0)));
         bottomPanel.add(btnXoa);
+        bottomPanel.add(Box.createRigidArea(new Dimension(0, 0)));
+        bottomPanel.add(btnCapNhat);
 
         add(bottomPanel, BorderLayout.SOUTH);
 
@@ -98,6 +109,7 @@ public class PhongPanel extends JPanel {
         btnThem.addActionListener(e -> addRoom());
         btnSua.addActionListener(e -> editRoom());
         btnXoa.addActionListener(e -> deleteRoom());
+        btnCapNhat.addActionListener(e -> loadData(danhSachPhong));
     }
 
     private void loadData(List<PhongDTO> ds) {
@@ -105,7 +117,7 @@ public class PhongPanel extends JPanel {
         for (PhongDTO p : ds) {
             String khuVucTen = "";
             for (KhuVucDTO khuVuc : khuVucList) {
-                if (khuVuc.getId() == p.getKhuVucID()) {
+                if (khuVuc.getId().equals(p.getKhuVucID())) {  // Sửa từ '==' thành '.equals()' để so sánh giá trị chuỗi
                     khuVucTen = khuVuc.getTenKhuVuc();
                     break;
                 }
@@ -113,7 +125,6 @@ public class PhongPanel extends JPanel {
 
             // Thêm dòng vào bảng với tên khu vực thay vì KhuVucID
             tableModel.addRow(new Object[]{
-                    p.getId(),
                     p.getMaPhong(),
                     p.getTenPhong(),
                     p.getLoaiPhong(),
@@ -123,6 +134,7 @@ public class PhongPanel extends JPanel {
             });
         }
     }
+
 
 
     private void updateTableData() {
@@ -148,12 +160,13 @@ public class PhongPanel extends JPanel {
 
     private void addRoom() {
         JTextField txtMaPhong = new JTextField();
-        txtMaPhong.setEditable(true);  // Cho phép người dùng nhập Mã Phòng
         JTextField txtTenPhong = new JTextField();
         JTextField txtGiaThue = new JTextField();
         JTextField txtLoaiPhong = new JTextField();
         JComboBox<String> cmbTrangThai = new JComboBox<>(new String[]{"Trống", "Đã thuê"});
 
+
+        updateTableData();
         // JComboBox để chọn khu vực
         JComboBox<String> cmbKhuVuc = new JComboBox<>();
         for (KhuVucDTO khuVuc : khuVucList) {
@@ -188,17 +201,20 @@ public class PhongPanel extends JPanel {
             }
 
             try {
+                // Chuyển đổi giaThueStr sang float
                 float giaThue = Float.parseFloat(giaThueStr);
                 String trangThai = (String) cmbTrangThai.getSelectedItem();
-                int khuVucID = -1;
+                String khuVucID = null;  // Chuyển khuVucID thành String
+
                 for (KhuVucDTO khuVuc : khuVucList) {
                     if (khuVuc.getTenKhuVuc().equals(khuVucSelected)) {
-                        khuVucID = khuVuc.getId();
+                        khuVucID = khuVuc.getId();  // Gán id từ khuVuc
                         break;
                     }
                 }
 
-                PhongDTO newPhong = new PhongDTO(0, maPhong, tenPhong, loaiPhong, 0, giaThue, "", trangThai, khuVucID);
+                // Tạo đối tượng PhongDTO với khuVucID kiểu String
+                PhongDTO newPhong = new PhongDTO(maPhong, tenPhong, loaiPhong, 0, giaThue, "", trangThai, khuVucID);
                 if (phongBUS.addPhong(newPhong)) {
                     JOptionPane.showMessageDialog(this, "Thêm phòng thành công!");
                     updateTableData();  // Cập nhật bảng
@@ -211,7 +227,6 @@ public class PhongPanel extends JPanel {
         }
     }
 
-
     private void editRoom() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
@@ -220,15 +235,14 @@ public class PhongPanel extends JPanel {
         }
 
         // Lấy thông tin phòng từ bảng
-        int id = Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString()); // ID từ bảng
-        String maPhong = tableModel.getValueAt(selectedRow, 1).toString();  // Mã phòng
-        String tenPhongOld = tableModel.getValueAt(selectedRow, 2).toString();
-        String loaiPhongOld = tableModel.getValueAt(selectedRow, 3).toString();
-        String giaThueOldStr = tableModel.getValueAt(selectedRow, 4).toString();
-        String trangThaiOld = tableModel.getValueAt(selectedRow, 5).toString();
+        String maPhong = tableModel.getValueAt(selectedRow, 0).toString();  // Mã phòng
+        String tenPhongOld = tableModel.getValueAt(selectedRow, 1).toString();
+        String loaiPhongOld = tableModel.getValueAt(selectedRow, 2).toString();
+        String giaThueOldStr = tableModel.getValueAt(selectedRow, 3).toString();
+        String trangThaiOld = tableModel.getValueAt(selectedRow, 4).toString();
 
         // Lấy khu vực (Tên khu vực) từ bảng (Cột 6 là tên khu vực, không phải ID)
-        String khuVucTenOld = tableModel.getValueAt(selectedRow, 6).toString();
+        String khuVucTenOld = tableModel.getValueAt(selectedRow, 5).toString();
 
         // Kiểm tra giá thuê có hợp lệ không
         float giaThueOld = 0;
@@ -296,16 +310,16 @@ public class PhongPanel extends JPanel {
                 String loaiPhong = txtLoaiPhong.getText().trim();
                 String trangThai = (String) cmbTrangThai.getSelectedItem();
                 String khuVucSelected = (String) cmbKhuVuc.getSelectedItem(); // Khu vực đã chọn
-                int khuVucID = -1;
+                String khuVucID = null;
                 for (KhuVucDTO khuVuc : khuVucList) {
                     if (khuVuc.getTenKhuVuc().equals(khuVucSelected)) {
-                        khuVucID = khuVuc.getId();
+                        khuVucID = khuVuc.getId();  // Lưu id là String
                         break;
                     }
                 }
 
                 // Tạo đối tượng phòng mới để sửa thông tin
-                PhongDTO editedPhong = new PhongDTO(id, maPhong, tenPhong, loaiPhong, 0, giaThue, "", trangThai, khuVucID);
+                PhongDTO editedPhong = new PhongDTO(maPhong, tenPhong, loaiPhong, 0, giaThue, "", trangThai, khuVucID);
 
                 // Gọi PhongBUS để cập nhật phòng
                 if (phongBUS.updatePhong(editedPhong)) {
@@ -320,7 +334,6 @@ public class PhongPanel extends JPanel {
         }
     }
 
-
     private void deleteRoom() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
@@ -328,16 +341,17 @@ public class PhongPanel extends JPanel {
             return;
         }
 
-        int id = Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString());
+        String maPhong = tableModel.getValueAt(selectedRow, 0).toString();
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa phòng này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            if (phongBUS.deletePhong(id)) {
+            if (phongBUS.deletePhong(maPhong)) {
                 JOptionPane.showMessageDialog(this, "Xóa phòng thành công!");
-                danhSachPhong.removeIf(p -> p.getId() == id);
-                loadData(danhSachPhong);  // Cập nhật lại bảng
+                danhSachPhong.removeIf(p -> p.getMaPhong().equals(maPhong));
+                loadData(danhSachPhong);
             } else {
                 JOptionPane.showMessageDialog(this, "Xóa phòng thất bại!");
             }
         }
     }
+
 }

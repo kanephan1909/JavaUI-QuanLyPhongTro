@@ -30,7 +30,7 @@ public class KhuVucBUS {
     }
 
     // Xóa Khu Vực
-    public boolean deleteKhuVuc(int id) {
+    public boolean deleteKhuVuc(String id) {
         return khuVucDAL.deleteKhuVuc(id);
     }
 }

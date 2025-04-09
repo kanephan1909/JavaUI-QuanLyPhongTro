@@ -18,7 +18,7 @@ public class HopDongDAL {
                 HopDongDTO hopDongDTO = new HopDongDTO(
                         rs.getInt("id"),
                         rs.getInt("maNguoiThue"),
-                        rs.getInt("maPhong"),
+                        rs.getString("maPhong"),
                         rs.getString("ngayLap"),
                         rs.getString("ngayBatDau"),
                         rs.getString("ngayKetThuc"),
@@ -38,7 +38,7 @@ public class HopDongDAL {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, hopDongDTO.getMaNguoiThue());
-            ps.setInt(2, hopDongDTO.getMaPhong());
+            ps.setString(2, hopDongDTO.getMaPhong());
             ps.setString(3, hopDongDTO.getNgayLap());
             ps.setString(4, hopDongDTO.getNgayBatDau());
             ps.setString(5, hopDongDTO.getNgayKetThuc());
@@ -57,7 +57,7 @@ public class HopDongDAL {
 
             // Cài đặt các tham số trong câu truy vấn SQL
             ps.setInt(1, hopDongDTO.getMaNguoiThue());
-            ps.setInt(2, hopDongDTO.getMaPhong());
+            ps.setString(2, hopDongDTO.getMaPhong());
             ps.setString(3, hopDongDTO.getNgayLap());
             ps.setString(4, hopDongDTO.getNgayBatDau());
             ps.setString(5, hopDongDTO.getNgayKetThuc());

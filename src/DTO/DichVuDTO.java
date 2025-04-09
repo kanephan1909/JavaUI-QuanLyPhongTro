@@ -4,11 +4,11 @@ public class DichVuDTO {
     private int id;            // ID của dịch vụ
     private String tenDichVu;  // Tên dịch vụ
     private double giaDichVu;  // Giá của dịch vụ
-    private int phongID;       // ID phòng liên kết với dịch vụ
-    private int khachThueID;   // ID khách thuê liên kết với dịch vụ
+    private String phongID;    // ID phòng liên kết với dịch vụ (thay đổi từ int sang String)
+    private String khachThueID;   // ID khách thuê liên kết với dịch vụ (thay đổi từ int sang String)
 
     // Constructor
-    public DichVuDTO(int id, String tenDichVu, double giaDichVu, int phongID, int khachThueID) {
+    public DichVuDTO(int id, String tenDichVu, double giaDichVu, String phongID, String khachThueID) {
         this.id = id;
         this.tenDichVu = tenDichVu;
         this.giaDichVu = giaDichVu;
@@ -41,19 +41,19 @@ public class DichVuDTO {
         this.giaDichVu = giaDichVu;
     }
 
-    public int getPhongID() {
+    public String getPhongID() {
         return phongID;
     }
 
-    public void setPhongID(int phongID) {
+    public void setPhongID(String phongID) {
         this.phongID = phongID;
     }
 
-    public int getKhachThueID() {
+    public String getKhachThueID() {
         return khachThueID;
     }
 
-    public void setKhachThueID(int khachThueID) {
+    public void setKhachThueID(String khachThueID) {
         this.khachThueID = khachThueID;
     }
 
@@ -63,9 +63,8 @@ public class DichVuDTO {
                 "id=" + id +
                 ", tenDichVu='" + tenDichVu + '\'' +
                 ", giaDichVu=" + giaDichVu +
-                ", phongID=" + phongID +
-                ", khachThueID=" + khachThueID +
+                ", phongID='" + phongID + '\'' +
+                ", khachThueID='" + khachThueID + '\'' +
                 '}';
     }
 }
-

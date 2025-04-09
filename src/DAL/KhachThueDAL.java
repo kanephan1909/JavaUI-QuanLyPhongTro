@@ -16,7 +16,7 @@ public class KhachThueDAL {
             statement.setString(1, khachThue.getHoTen());
             statement.setString(2, khachThue.getSoDienThoai());
             statement.setString(3, khachThue.getCccd());
-            statement.setInt(4, khachThue.getPhongID());
+            statement.setString(4, khachThue.getPhongID());
             statement.setString(5, khachThue.getNgayThue());
             statement.setString(6, khachThue.getNgayTra());
             return statement.executeUpdate() > 0;
@@ -40,7 +40,7 @@ public class KhachThueDAL {
                         resultSet.getString("HoTen"),
                         resultSet.getString("SoDienThoai"),
                         resultSet.getString("CCCD"),
-                        resultSet.getInt("PhongID"),
+                        resultSet.getString("PhongID"), // Chuyển sang setInt
                         resultSet.getString("NgayThue"),
                         resultSet.getString("NgayTra")
                 );
@@ -65,7 +65,7 @@ public class KhachThueDAL {
                             rs.getString("HoTen"),
                             rs.getString("SoDienThoai"),
                             rs.getString("CCCD"),
-                            rs.getInt("PhongID"),
+                            rs.getString("PhongID"),
                             rs.getString("NgayThue"),
                             rs.getString("NgayTra")
                     );
@@ -82,19 +82,25 @@ public class KhachThueDAL {
         String sql = "UPDATE KhachThue SET HoTen = ?, SoDienThoai = ?, CCCD = ?, PhongID = ?, NgayThue = ?, NgayTra = ? WHERE ID = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            // In ra các giá trị để kiểm tra
+            System.out.println("Updating customer: " + khachThue.getId() + " - " + khachThue.getHoTen() + " - " + khachThue.getPhongID() + " - " + khachThue.getNgayThue());
+
             statement.setString(1, khachThue.getHoTen());
             statement.setString(2, khachThue.getSoDienThoai());
             statement.setString(3, khachThue.getCccd());
-            statement.setInt(4, khachThue.getPhongID());
+            statement.setString(4, khachThue.getPhongID());
             statement.setString(5, khachThue.getNgayThue());
             statement.setString(6, khachThue.getNgayTra());
             statement.setInt(7, khachThue.getId());
+
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
+
 
     // Xóa khách thuê
     public boolean deleteKhachThue(int id) {
@@ -108,4 +114,5 @@ public class KhachThueDAL {
         }
         return false;
     }
+
 }

@@ -1,23 +1,23 @@
 package DTO;
 
 public class KhuVucDTO {
-    private int id;
+    private String id;
     private String tenKhuVuc;
     private String diaChi;
 
     // Constructor
-    public KhuVucDTO(int id, String tenKhuVuc, String diaChi) {
+    public KhuVucDTO(String id, String tenKhuVuc, String diaChi) {
         this.id = id;
         this.tenKhuVuc = tenKhuVuc;
         this.diaChi = diaChi;
     }
 
     // Getters and Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
