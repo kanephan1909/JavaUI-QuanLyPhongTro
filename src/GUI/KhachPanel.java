@@ -4,11 +4,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import BUS.KhachThueBUS;
 import BUS.PhongBUS;
 import DTO.KhachThueDTO;
+import DTO.KhuVucDTO;
 import DTO.PhongDTO;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +21,8 @@ public class KhachPanel extends JPanel {
     private DefaultTableModel tableModel;
     private KhachThueBUS khachbus;
     private PhongBUS phongBUS;
+    private List<PhongDTO> phongList = new ArrayList<>();
+
 
     private JTextField txtSearch;
     private JButton btnSearch, btnAdd, btnEdit, btnDelete;
@@ -26,7 +30,7 @@ public class KhachPanel extends JPanel {
     public KhachPanel() {
         khachbus = new KhachThueBUS();
         phongBUS = new PhongBUS();
-        setLayout(new BorderLayout(10, 10)); // Dùng BorderLayout cho toàn bộ panel
+        setLayout(new BorderLayout(0, 0)); // Dùng BorderLayout cho toàn bộ panel
         setBackground(Color.WHITE);
         initComponents();
         loadData();
@@ -34,13 +38,28 @@ public class KhachPanel extends JPanel {
 
     private void initComponents() {
         // Tạo panel tìm kiếm
-        JPanel topPanel = new JPanel(new BorderLayout(5, 5));
-        txtSearch = new JTextField();
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        txtSearch = new JTextField(20);
         btnSearch = new JButton("Tìm kiếm");
-        topPanel.add(new JLabel("Nhập tên khách:"), BorderLayout.WEST);
-        topPanel.add(txtSearch, BorderLayout.CENTER);
-        topPanel.add(btnSearch, BorderLayout.EAST);
+
+        topPanel.add(new JLabel("Nhập tên khách:"));
+        topPanel.add(txtSearch);
+        topPanel.add(btnSearch);
+
         add(topPanel, BorderLayout.NORTH);
+
+
+
+//        JPanel topPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+//        topPanel2.setPreferredSize(new Dimension(200, 100));
+//        topPanel2.setBackground(new Color(22, 26, 83));
+//        JLabel lblKhachThue = new JLabel("<html><div style='text-align: center;margin-top: 18px; color: #fff;'>Khách Thuê</div></html>");
+//        lblKhachThue.setFont(new Font("Segoe UI", Font.BOLD, 20));
+//        lblKhachThue.setForeground(Color.WHITE); // Màu chữ trắng cho label
+//
+//        topPanel2.add(lblKhachThue, BorderLayout.CENTER);
+//        add(topPanel2, BorderLayout.NORTH);
+
 
         // Center panel: bảng hiển thị
         String[] columns = {"ID", "Họ tên", "SĐT", "CCCD", "Phòng", "Ngày thuê", "Ngày Trả"};
@@ -56,13 +75,13 @@ public class KhachPanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         // Ẩn cột ID
-        table.getColumnModel().getColumn(0).setMinWidth(0);
-        table.getColumnModel().getColumn(0).setMaxWidth(0);
-        table.getColumnModel().getColumn(0).setWidth(0);
+//        table.getColumnModel().getColumn(0).setMinWidth(0);
+//        table.getColumnModel().getColumn(0).setMaxWidth(0);
+//        table.getColumnModel().getColumn(0).setWidth(0);
 
         // Bottom panel: các nút chức năng
         JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS)); // Sử dụng BoxLayout để căn giữa các nút
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         bottomPanel.setAlignmentX(Component.CENTER_ALIGNMENT);  // Căn giữa panel
 
         btnAdd = new JButton("Thêm");
@@ -83,16 +102,16 @@ public class KhachPanel extends JPanel {
         btnSearch.setForeground(Color.WHITE);
 
         // Đặt kích thước cho các nút
-        Dimension buttonSize = new Dimension(150, 40);  // Thay đổi kích thước của nút
+        Dimension buttonSize = new Dimension(80, 30);  // Thay đổi kích thước của nút
         btnAdd.setPreferredSize(buttonSize);
         btnEdit.setPreferredSize(buttonSize);
         btnDelete.setPreferredSize(buttonSize);
 
         // Thêm các nút vào bottomPanel
         bottomPanel.add(btnAdd);
-        bottomPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Thêm khoảng cách giữa các nút
+        bottomPanel.add(Box.createRigidArea(new Dimension(0, 0))); // Thêm khoảng cách giữa các nút
         bottomPanel.add(btnEdit);
-        bottomPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        bottomPanel.add(Box.createRigidArea(new Dimension(0, 0)));
         bottomPanel.add(btnDelete);
 
         // Thêm bottomPanel vào phần Nam của BorderLayout
@@ -123,6 +142,7 @@ public class KhachPanel extends JPanel {
             });
         }
     }
+
 
 
     private void timKhachThue() {
@@ -211,7 +231,6 @@ public class KhachPanel extends JPanel {
         JTextField txtSdt = new JTextField(sdt, 20);
         JTextField txtCccd = new JTextField(cccd, 20);
         JTextField txtPhong = new JTextField(String.valueOf(phongId));
-        txtPhong.setEnabled(false);
 
         // Tạo JDateChooser cho ngày thuê
         JDateChooser dateChooserNgayThue = new JDateChooser();

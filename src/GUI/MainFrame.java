@@ -33,6 +33,18 @@ public class MainFrame extends JFrame {
         JPanel sidebar = createSidebar();
         add(sidebar, BorderLayout.WEST);
 
+//        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+//        // Thêm chiều rộng cho topPanel
+//        topPanel.setPreferredSize(new Dimension(0, 100));
+//        topPanel.setBackground(new Color(22, 26, 83));
+//
+//        JLabel lblHome = new JLabel("<html><div style='text-align: center;margin-top: 18px; color: #fff;'>Trang Chủ</div></html>");
+//        lblHome.setFont(new Font("Segoe UI", Font.BOLD, 20));
+//        lblHome.setForeground(Color.WHITE); // Màu chữ trắng cho label
+//
+//        topPanel.add(lblHome, BorderLayout.CENTER);
+//        add(topPanel, BorderLayout.NORTH);
+
 
         // Cập nhật contentPanel Flat Design
         contentPanel = new JPanel(new BorderLayout());
@@ -90,11 +102,11 @@ public class MainFrame extends JFrame {
 
         // Nút menu
         addSidebarButton(menuPanel, "Trang Chủ", new HomePanel(), gbc);
-        addSidebarButton(menuPanel, "Quản lý Hóa đơn", new GUI.HoaDonPanel(), gbc);
-        addSidebarButton(menuPanel, "Quản lý Khách hàng", new GUI.KhachPanel(), gbc);
+        addSidebarButton(menuPanel, "Quản lý Khu Vực", new GUI.KhuVucPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Phòng", new GUI.PhongPanel(), gbc);
-        addSidebarButton(menuPanel, "Quản lý Hợp Đồng", null, gbc);
-        addSidebarButton(menuPanel, "Quản lý Khu Vực", null, gbc);
+        addSidebarButton(menuPanel, "Quản lý Khách hàng", new GUI.KhachPanel(), gbc);
+        addSidebarButton(menuPanel, "Quản lý Hợp Đồng", new GUI.HopDongPanel(), gbc);
+        addSidebarButton(menuPanel, "Quản lý Hóa đơn", new GUI.HoaDonPanel(), gbc);
         addSidebarButton(menuPanel, "Logout", null, gbc); // Thêm mục "Logout"
 
         // Thêm panel rỗng để đẩy các nút lên đầu
@@ -134,13 +146,14 @@ public class MainFrame extends JFrame {
         buttonPanel.add(iconLabel, BorderLayout.WEST);  // Đặt icon vào bên trái nút
 
         buttonPanel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Thêm hiệu ứng khi hover
-        buttonPanel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0), 1)); // Viền nhẹ cho nút
 
         // Hiệu ứng hover cho nút
         buttonPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (panel != null) {
+                if (text.equals("Logout")) {
+                    System.exit(0);  // Đóng ứng dụng
+                } else if (panel != null) {
                     switchPanel(panel); // Chuyển panel khi click
                 }
             }

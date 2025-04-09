@@ -50,6 +50,28 @@ public class HopDongDAL {
         return false;
     }
 
+    public boolean updateHopDong(HopDongDTO hopDongDTO) {
+        String query = "UPDATE HopDong SET MaNguoiThue = ?, MaPhong = ?, NgayLap = ?, NgayBatDau = ?, NgayKetThuc = ?, TienDatCoc = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            // Cài đặt các tham số trong câu truy vấn SQL
+            ps.setInt(1, hopDongDTO.getMaNguoiThue());
+            ps.setInt(2, hopDongDTO.getMaPhong());
+            ps.setString(3, hopDongDTO.getNgayLap());
+            ps.setString(4, hopDongDTO.getNgayBatDau());
+            ps.setString(5, hopDongDTO.getNgayKetThuc());
+            ps.setDouble(6, hopDongDTO.getTienDatCoc());
+            ps.setInt(7, hopDongDTO.getId());  // Cập nhật hợp đồng theo id
+
+            // Thực thi câu lệnh UPDATE và kiểm tra xem có cập nhật thành công không
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean deleteHopDong(int id) {
         String query = "DELETE FROM HopDong WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

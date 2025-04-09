@@ -14,6 +14,12 @@ public class PhongBUS {
         phongDAL = new PhongDAL();
     }
 
+    // Kiểm tra mã phòng có tồn tại không
+    public boolean checkMaPhongExist(String maPhong) {
+        PhongDTO phong = phongDAL.searchPhong(maPhong);
+        return phong != null; // Nếu tìm thấy phòng với mã phòng đã nhập, trả về true
+    }
+
     // Lấy danh sách tất cả phòng
     public List<PhongDTO> getAllPhong() {
         return phongDAL.getAllPhong();
@@ -50,5 +56,5 @@ public class PhongBUS {
         }
         return phongTrong;
     }
-
 }
+

@@ -7,11 +7,11 @@ public class HomePanel extends JPanel {
     private JPanel contentPanel;
 
     public HomePanel() {
-        setLayout(new BorderLayout(10, 10)); // Sử dụng BorderLayout và thêm khoảng cách giữa các phần tử
+        setLayout(new BorderLayout(0, 0)); // Sử dụng BorderLayout và thêm khoảng cách giữa các phần tử
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         // Thêm chiều rộng cho topPanel
         topPanel.setPreferredSize(new Dimension(200, 100));
-        topPanel.setBackground(new Color(221, 156, 43));
+        topPanel.setBackground(new Color(22, 26, 83));
 
         JLabel lblHome = new JLabel("<html><div style='text-align: center;margin-top: 18px; color: #fff;'>Trang Chủ</div></html>");
         lblHome.setFont(new Font("Segoe UI", Font.BOLD, 20));

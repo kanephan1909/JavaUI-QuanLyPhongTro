@@ -42,5 +42,4 @@ public class HoaDonBUS {
         return hoaDonDAL.deleteHoaDon(id);
     }
 
-
 }

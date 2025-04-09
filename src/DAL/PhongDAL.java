@@ -9,6 +9,7 @@ import java.util.List;
 public class PhongDAL {
 
     // Lấy danh sách tất cả phòng
+    // Phương thức lấy tất cả phòng
     public static List<PhongDTO> getAllPhong() {
         List<PhongDTO> dsPhong = new ArrayList<>();
         String sql = "SELECT * FROM Phong";
@@ -37,9 +38,10 @@ public class PhongDAL {
         return dsPhong;
     }
 
+
     // Thêm phòng mới
     public static boolean addPhong(PhongDTO phong) {
-        if (phong == null || phong.getMaPhong() == null) return false;
+        if (phong == null || phong.getMaPhong() == null || phong.getTenPhong() == null) return false;
 
         String sql = "INSERT INTO Phong (MaPhong, TenPhong, LoaiPhong, DienTich, GiaPhong, MoTa, TinhTrang, KhuVucID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -55,11 +57,15 @@ public class PhongDAL {
             ps.setInt(8, phong.getKhuVucID());
 
             return ps.executeUpdate() > 0;
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.err.println("Lỗi: Mã phòng đã tồn tại!");
+            return false;  // Trả về false nếu có lỗi trùng mã
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
+
 
     // Cập nhật thông tin phòng (dựa trên ID)
     public static boolean updatePhong(PhongDTO phong) {

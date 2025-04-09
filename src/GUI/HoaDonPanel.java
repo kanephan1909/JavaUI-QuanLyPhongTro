@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import com.toedter.calendar.JDateChooser;
 
-
 public class HoaDonPanel extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private ArrayList<HoaDonDTO> danhSachHoaDon;
     private JButton btnThem, btnSua, btnXoa;
     private JComboBox<String> cboTrangThai;
-    private JTextField txtMaPhong, txtTienDien, txtTienNuoc, txtTienPhong, txtThangNam;
+    private JTextField txtMaPhong, txtTienDien, txtTienNuoc, txtTienPhong, txtMaHopDong;
+    private JDateChooser dateThangNam;
 
     private HoaDonBUS hoaDonBUS = new HoaDonBUS();
     private KhachThueBUS khachThueBUS = new KhachThueBUS();
@@ -27,14 +27,29 @@ public class HoaDonPanel extends JPanel {
     public HoaDonPanel() {
         initComponents();
         loadData();
-
     }
 
     private void initComponents() {
-        setLayout(new BorderLayout());
 
-        JPanel inputPanel = new JPanel(new GridLayout(6, 2, 5, 5));
+        setLayout(new BorderLayout(5,5));
+
+//        JPanel topPanel3 = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+//        topPanel3.setPreferredSize(new Dimension(200, 100));
+//        topPanel3.setBackground(new Color(22, 26, 83));
+//        JLabel lblHoaDon = new JLabel("<html><div style='text-align: center;margin-top: 18px; color: #fff;'>Hóa Đơn</div></html>");
+//        lblHoaDon.setFont(new Font("Segoe UI", Font.BOLD, 20));
+//        lblHoaDon.setForeground(Color.WHITE); // Màu chữ trắng cho label
+//        topPanel3.add(lblHoaDon, BorderLayout.CENTER);
+//        add(topPanel3, BorderLayout.NORTH);
+
+
+        JPanel inputPanel = new JPanel(new GridLayout(7, 2, 5, 5));
+//        inputPanel.setBounds(0, 100, 1005, 200);
         inputPanel.setBorder(BorderFactory.createTitledBorder("Nhập thông tin hóa đơn"));
+
+        inputPanel.add(new JLabel("Mã Hợp Đồng:"));
+        txtMaHopDong = new JTextField();
+        inputPanel.add(txtMaHopDong);
 
         inputPanel.add(new JLabel("Mã phòng:"));
         txtMaPhong = new JTextField();
@@ -54,9 +69,9 @@ public class HoaDonPanel extends JPanel {
 
         // Sử dụng JDateChooser cho Tháng/Năm
         inputPanel.add(new JLabel("Tháng/Năm (MM/YYYY):"));
-        JDateChooser dateChooser = new JDateChooser();
-        dateChooser.setDateFormatString("MM/yyyy"); // Đặt định dạng hiển thị là MM/yyyy
-        inputPanel.add(dateChooser);
+        dateThangNam = new JDateChooser();
+        dateThangNam.setDateFormatString("MM/yyyy"); // Đặt định dạng hiển thị là MM/yyyy
+        inputPanel.add(dateThangNam);
 
         inputPanel.add(new JLabel("Trạng thái:"));
         cboTrangThai = new JComboBox<>(new String[]{"Đã thanh toán", "Chưa thanh toán"});
@@ -68,19 +83,47 @@ public class HoaDonPanel extends JPanel {
         String[] columns = {"ID", "Mã Hợp Đồng", "Tháng/Năm", "Tiền Phòng", "Tiền Điện", "Tiền Nước", "Tổng Tiền", "Trạng Thái"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
-        add(new JScrollPane(table), BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
+        tablePanel.setBounds(200, 0, 600, 400);
+        add(tablePanel, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         btnThem = new JButton("Thêm");
         btnSua = new JButton("Sửa");
         btnXoa = new JButton("Xóa");
 
+        Color customColor = new Color(20, 25, 95);
+        btnThem.setBackground(customColor);
+        btnSua.setBackground(customColor);
+        btnXoa.setBackground(customColor);
+
+        // Đặt màu chữ cho các nút
+        btnThem.setForeground(Color.WHITE);
+        btnSua.setForeground(Color.WHITE);
+        btnXoa.setForeground(Color.WHITE);
+
+        // Đặt kích thước cho các nút
+        Dimension buttonSize = new Dimension(80, 30);  // Thay đổi kích thước của nút
+        btnThem.setPreferredSize(buttonSize);
+        btnSua.setPreferredSize(buttonSize);
+        btnXoa.setPreferredSize(buttonSize);
+
+        // Thêm các nút vào bottomPanel
+        buttonPanel.add(btnThem);
+        buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Thêm khoảng cách giữa các nút
+        buttonPanel.add(btnSua);
+        buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        buttonPanel.add(btnXoa);
+
         buttonPanel.add(btnThem);
         buttonPanel.add(btnSua);
         buttonPanel.add(btnXoa);
+
         add(buttonPanel, BorderLayout.SOUTH);
 
-        btnThem.addActionListener(e -> themHoaDon(dateChooser)); // Truyền dateChooser vào
+        btnThem.addActionListener(e -> themHoaDon());
         btnSua.addActionListener(e -> suaHoaDon());
         btnXoa.addActionListener(e -> xoaHoaDon());
     }
@@ -106,22 +149,39 @@ public class HoaDonPanel extends JPanel {
         }
     }
 
-    private String getCurrentDate() {
-        return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-    }
-
-    private void themHoaDon(JDateChooser dateChooser) {
+    private void themHoaDon() {
         try {
-            int maPhong = Integer.parseInt(txtMaPhong.getText().trim());
-            float tienDien = Float.parseFloat(txtTienDien.getText().trim());
-            float tienNuoc = Float.parseFloat(txtTienNuoc.getText().trim());
-            float tienPhong = Float.parseFloat(txtTienPhong.getText().trim());
+            String maPhongText = txtMaPhong.getText().trim();
+            String tienDienText = txtTienDien.getText().trim();
+            String tienNuocText = txtTienNuoc.getText().trim();
+            String tienPhongText = txtTienPhong.getText().trim();
+
+            // Kiểm tra các trường nhập liệu
+            if (maPhongText.isEmpty() || tienDienText.isEmpty() || tienNuocText.isEmpty() || tienPhongText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
+                return;
+            }
+
+            // Chuyển đổi các giá trị nhập vào
+            int maPhong = Integer.parseInt(maPhongText);
+            float tienDien = Float.parseFloat(tienDienText);
+            float tienNuoc = Float.parseFloat(tienNuocText);
+            float tienPhong = Float.parseFloat(tienPhongText);
+
+            // Kiểm tra các giá trị số hợp lệ
+            if (tienDien < 0 || tienNuoc < 0 || tienPhong < 0) {
+                JOptionPane.showMessageDialog(this, "Tiền điện, tiền nước và tiền phòng phải là số dương!");
+                return;
+            }
+
+            // Tính tổng tiền
             float tongTien = tienDien + tienNuoc + tienPhong;
 
+            // Lấy tháng/năm
             String thangNam = "";
-            if (dateChooser.getDate() != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
-                thangNam = sdf.format(dateChooser.getDate());
+            if (dateThangNam.getDate() != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                thangNam = sdf.format(dateThangNam.getDate());
             }
 
             if (thangNam.isEmpty()) {
@@ -129,30 +189,23 @@ public class HoaDonPanel extends JPanel {
                 return;
             }
 
-            // Kiểm tra định dạng tháng/năm
-            if (!thangNam.matches("\\d{2}/\\d{4}")) {
-                JOptionPane.showMessageDialog(this, "Tháng/Năm phải theo định dạng MM/YYYY");
-                return;
-            }
+            int maHopDong = maPhong;
 
-            String trangThai = cboTrangThai.getSelectedItem().toString();
-
-            // Giả sử tìm được mã hợp đồng qua mã phòng (giả lập)
-            int maHopDong = maPhong; // Giả sử map 1:1 trong trường hợp này
-
-            HoaDonDTO hoaDon = new HoaDonDTO(0, maHopDong, thangNam, tienPhong, tienDien, tienNuoc, tongTien, trangThai);
+            HoaDonDTO hoaDon = new HoaDonDTO(0, maHopDong, thangNam, tienPhong, tienDien, tienNuoc, tongTien, cboTrangThai.getSelectedItem().toString());
 
             // Thêm hóa đơn vào cơ sở dữ liệu
             if (hoaDonBUS.addHoaDon(hoaDon)) {
-                danhSachHoaDon.add(hoaDon);
-                capNhatTable();
+                danhSachHoaDon.add(hoaDon);  // Cập nhật danh sách hóa đơn
+                capNhatTable();              // Cập nhật lại bảng
                 JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công!");
-                clearForm();
+                clearForm();                 // Xóa các trường nhập liệu
             } else {
                 JOptionPane.showMessageDialog(this, "Thêm hóa đơn thất bại! Kiểm tra tổng tiền.");
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng số!");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -162,7 +215,7 @@ public class HoaDonPanel extends JPanel {
         txtTienDien.setText("");
         txtTienNuoc.setText("");
         txtTienPhong.setText("");
-        txtThangNam.setText("");
+        dateThangNam.setDate(null); // Clear JDateChooser
         cboTrangThai.setSelectedIndex(0);
     }
 
@@ -174,35 +227,29 @@ public class HoaDonPanel extends JPanel {
         }
 
         HoaDonDTO hd = danhSachHoaDon.get(selectedRow);
-
-        // Tạo form trong JDialog
         Window window = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog((Frame) window, "Sửa Hóa Đơn", true);
         dialog.setSize(400, 350);
-        dialog.setLayout(new GridLayout(8, 2, 10, 10)); // Cập nhật số hàng cho GridLayout
+        dialog.setLayout(new GridLayout(8, 2, 10, 10));
         dialog.setLocationRelativeTo(this);
 
-        // Tạo các trường nhập dữ liệu
         JTextField tfTienDien = new JTextField(String.valueOf(hd.getTienDien()));
         JTextField tfTienNuoc = new JTextField(String.valueOf(hd.getTienNuoc()));
         JTextField tfTienPhong = new JTextField(String.valueOf(hd.getTienPhong()));
 
-        // Tạo JDateChooser cho Tháng/Năm
         JDateChooser dateChooser = new JDateChooser();
         try {
-            // Định dạng ngày là yyyy-MM-dd
             SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd");
-            Date thangNamDate = sdfInput.parse(hd.getThangNam()); // Phân tích chuỗi ngày đầy đủ
+            Date thangNamDate = sdfInput.parse(hd.getThangNam());
             dateChooser.setDate(thangNamDate);
         } catch (Exception e) {
-            e.printStackTrace(); // Nếu có lỗi, ngày mặc định sẽ là null
+            e.printStackTrace();
         }
 
         String[] trangThaiOptions = {"Chưa thanh toán", "Đã thanh toán", "Quá hạn"};
         JComboBox<String> cbTrangThai = new JComboBox<>(trangThaiOptions);
         cbTrangThai.setSelectedItem(hd.getTrangThai());
 
-        // Add các thành phần vào dialog
         dialog.add(new JLabel("Tiền điện:"));
         dialog.add(tfTienDien);
         dialog.add(new JLabel("Tiền nước:"));
@@ -226,23 +273,19 @@ public class HoaDonPanel extends JPanel {
                 float tienNuoc = Float.parseFloat(tfTienNuoc.getText());
                 float tienPhong = Float.parseFloat(tfTienPhong.getText());
 
-                // Lấy ngày từ JDateChooser và định dạng lại thành MM/YYYY
                 Date selectedDate = dateChooser.getDate();
                 if (selectedDate == null) {
                     JOptionPane.showMessageDialog(dialog, "Vui lòng chọn tháng/năm!");
                     return;
                 }
 
-                // Định dạng ngày thành yyyy-MM-01 (ngày đầu tiên của tháng)
-                SimpleDateFormat sdfOutput = new SimpleDateFormat("yyyy-MM-01"); // Lấy ngày đầu tiên của tháng
+                SimpleDateFormat sdfOutput = new SimpleDateFormat("yyyy-MM-01");
                 String thangNam = sdfOutput.format(selectedDate);
 
                 String trangThai = (String) cbTrangThai.getSelectedItem();
 
-                // Tính tổng tiền
                 float tongTien = tienDien + tienNuoc + tienPhong;
 
-                // Cập nhật thông tin hóa đơn
                 hd.setTienDien(tienDien);
                 hd.setTienNuoc(tienNuoc);
                 hd.setTienPhong(tienPhong);
@@ -250,9 +293,8 @@ public class HoaDonPanel extends JPanel {
                 hd.setThangNam(thangNam);
                 hd.setTrangThai(trangThai);
 
-                // Cập nhật hóa đơn vào cơ sở dữ liệu
                 if (hoaDonBUS.updateHoaDon(hd)) {
-                    loadData(); // Gọi lại loadData() để làm mới bảng
+                    loadData();
                     capNhatTable();
                     JOptionPane.showMessageDialog(this, "Cập nhật hóa đơn thành công!");
                     dialog.dispose();
