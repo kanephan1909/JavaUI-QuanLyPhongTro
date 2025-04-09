@@ -104,7 +104,7 @@ public class MainFrame extends JFrame {
         addSidebarButton(menuPanel, "Trang Chủ", new HomePanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Khu Vực", new GUI.KhuVucPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Phòng", new GUI.PhongPanel(), gbc);
-        addSidebarButton(menuPanel, "Quản lý Khách hàng", new GUI.KhachPanel(), gbc);
+        addSidebarButton(menuPanel, "Quản lý Khách Thuê", new GUI.KhachPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Hợp Đồng", new GUI.HopDongPanel(), gbc);
         addSidebarButton(menuPanel, "Quản lý Hóa đơn", new GUI.HoaDonPanel(), gbc);
         addSidebarButton(menuPanel, "Logout", null, gbc); // Thêm mục "Logout"
@@ -158,6 +158,8 @@ public class MainFrame extends JFrame {
                 }
             }
 
+
+
             @Override
             public void mouseEntered(MouseEvent e) {
                 buttonPanel.setBackground(new Color(214, 148, 17)); // Màu khi hover
@@ -186,18 +188,18 @@ public class MainFrame extends JFrame {
     }
 
     // Hàm làm sáng nút khi nhấn
-//    private void highlightButton(JPanel buttonPanel) {
-//        if (activePanel != null) {
-//            activePanel.setBackground(new Color(186, 132, 40)); // Màu gốc của nút
-//            activePanel.getComponent(0).setForeground(Color.WHITE); // Đổi màu chữ
-//        }
-//        buttonPanel.setBackground(new Color(100, 149, 237)); // Màu xanh dương khi chọn
-//        buttonPanel.getComponent(0).setForeground(Color.WHITE); // Đổi màu chữ thành trắng khi chọn
-//        activePanel = buttonPanel;
-//    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
+    private void highlightButton(JPanel buttonPanel) {
+        if (activePanel != null) {
+            activePanel.setBackground(new Color(186, 132, 40)); // Màu gốc của nút
+            activePanel.getComponent(0).setForeground(Color.WHITE); // Đổi màu chữ
+        }
+        buttonPanel.setBackground(new Color(100, 149, 237)); // Màu xanh dương khi chọn
+        buttonPanel.getComponent(0).setForeground(Color.WHITE); // Đổi màu chữ thành trắng khi chọn
+        activePanel = buttonPanel;
     }
+
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
+//    }
 
 }
